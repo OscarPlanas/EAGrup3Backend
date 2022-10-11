@@ -1,0 +1,1 @@
+{"version":3,"file":"Episode.js","sourceRoot":"","sources":["../../src/model/Episode.ts"],"names":[],"mappings":";;AAAA,uCAAyC;AAEzC,MAAM,OAAO,GAAG,IAAI,iBAAM,CAAC;IACvB,QAAQ,EAAE,MAAM;IAChB,IAAI,EAAE,MAAM;IACZ,QAAQ,EAAE,IAAI;IACd,aAAa,EAAE,MAAM;IACrB,cAAc,EAAE,MAAM;CACzB,CAAC,CAAC;AAEH,kBAAe,IAAA,gBAAK,EAAC,SAAS,EAAE,OAAO,CAAC,CAAC"}
