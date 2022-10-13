@@ -16,11 +16,13 @@ const Series_1 = __importDefault(require("../model/Series"));
 const Comment_1 = __importDefault(require("../model/Comment"));
 const Episode_1 = __importDefault(require("../model/Episode"));
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.find().populate('comments, episodes');
+    const series = yield Series_1.default.find().populate({ path: 'comments', populate: { path: 'user' } });
+    // populate('comments, episodes');
     res.json(series);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.findById(req.params.id_serie).populate('comments, episodes');
+    const series = yield Series_1.default.findById(req.params.id_serie).populate({ path: 'comments', populate: { path: 'user' } });
+    // 'comments, episodes');
     if (!series) {
         return res.status(404).send('The series does not exist');
     }

@@ -8,5 +8,6 @@ router.post('/register', body('password').isLength({ min: 6 }), body('email').is
 router.post('/login', userController.login);
 router.get('/profile/:id', userController.profile);
 router.get('/', userController.getall);
+// router.delete('/:id', userController.deleteUser);
 
 export default router;

@@ -11,5 +11,6 @@ router.post('/register', (0, express_validator_1.body)('password').isLength({ mi
 router.post('/login', userController_1.default.login);
 router.get('/profile/:id', userController_1.default.profile);
 router.get('/', userController_1.default.getall);
+// router.delete('/:id', userController.deleteUser);
 exports.default = router;
 //# sourceMappingURL=User.js.map

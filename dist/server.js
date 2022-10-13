@@ -23,7 +23,7 @@ app.use('/api/events', Event_1.default);
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
-mongoose_1.default.connect('mongodb://localhost/users', { useNewUrlParser: true })
+mongoose_1.default.connect('mongodb://localhost/TVTracker', { useNewUrlParser: true })
     .then(() => {
     // tslint:disable-next-line:no-console
     app.listen(port, () => console.log("Server corriendo en el puerto " + port));

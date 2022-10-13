@@ -4,12 +4,16 @@ import Episode from '../model/Episode';
 import { Request, Response } from 'express';
 
 const getall = async (req: Request, res: Response) => {
-    const series = await Series.find().populate('comments, episodes');
+    const series = await Series.find().populate({ path: 'comments', populate: { path: 'user' } });
+
+    // populate('comments, episodes');
     res.json(series);
 };
 
 const getone = async (req: Request, res: Response) => {
-    const series = await Series.findById(req.params.id_serie).populate('comments, episodes');
+    const series = await Series.findById(req.params.id_serie).populate({ path: 'comments', populate: { path: 'user' } });
+
+        // 'comments, episodes');
     if (!series) {
         return res.status(404).send('The series does not exist');
     }

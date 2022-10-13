@@ -54,10 +54,20 @@ const getone = async (req: Request, res: Response) => {
 	res.json(user);
 };
 
+const deleteUser = async (req: Request, res: Response) => {
+	await User.findByIdAndDelete(req.params.id, (err: any) => {
+		if (err) {
+			return res.status(500).send(err);
+		}
+		res.status(200).json({ status: 'User deleted' });
+	});
+};
+
 export default {
 	register,
 	login,
 	profile,
 	getall,
-	getone
+	getone,
+	deleteUser
 };
