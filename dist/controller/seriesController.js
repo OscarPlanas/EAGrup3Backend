@@ -21,7 +21,7 @@ const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(series);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.findById(req.params.id_serie).populate({ path: 'comments', populate: { path: 'user' } });
+    const series = yield Series_1.default.findById(req.params.id).populate({ path: 'comments', populate: { path: 'user' } });
     // 'comments, episodes');
     if (!series) {
         return res.status(404).send('The series does not exist');

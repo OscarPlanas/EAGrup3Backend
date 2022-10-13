@@ -11,7 +11,8 @@ const getall = async (req: Request, res: Response) => {
 };
 
 const getone = async (req: Request, res: Response) => {
-    const series = await Series.findById(req.params.id_serie).populate({ path: 'comments', populate: { path: 'user' } });
+    const series = await Series.findById(req.params.id).populate({ path: 'comments', populate: { path: 'user' } });
+
 
         // 'comments, episodes');
     if (!series) {

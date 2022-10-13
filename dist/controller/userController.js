@@ -60,20 +60,20 @@ const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.params.id);
     res.json(user);
 });
-const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield User_1.default.findByIdAndDelete(req.params.id, (err) => {
+/*const deleteUser = async (req: Request, res: Response) => {
+    await User.findByIdAndDelete(req.params.id, (err: any) => {
         if (err) {
             return res.status(500).send(err);
         }
         res.status(200).json({ status: 'User deleted' });
     });
-});
+};*/
 exports.default = {
     register,
     login,
     profile,
     getall,
-    getone,
-    deleteUser
+    getone
+    // deleteUser
 };
 //# sourceMappingURL=userController.js.map
