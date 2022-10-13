@@ -22,18 +22,24 @@ const register = async (req: Request, res: Response) => {
 };
 
 const login = async (req: Request, res : Response) => {
-	const user = await User.findOne({ email: req.body.email });
+	const email = req.body.email;
+	let password = req.body.password;
+	password = CryptoJS.AES.encrypt(password, 'groupEA2022').toString();
+	const user = await User.findOne({ email });
+
 	if (!user) {
 		return res.status(404).send('The email does not exist');
 	}
-	const validPassword = CryptoJS.AES.decrypt(user.password, 'groupEA2022').toString(CryptoJS.enc.Utf8);
-	if (!validPassword) {
+	else if (password.match(user.password) === true) {
+
+		const token = jwt.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+			expiresIn: 60 * 60 * 24
+		});
+		res.status(200).json({ auth: true, token });
+	}
+	else{
 		return res.status(401).json({ auth: false, token: null });
 	}
-	const token = jwt.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
-		expiresIn: 60 * 60 * 24
-	});
-	res.status(200).json({ auth: true, token });
 };
 
 const profile = async (req: Request, res: Response) => {

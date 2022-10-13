@@ -32,18 +32,22 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json({ auth: true, token });
 });
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findOne({ email: req.body.email });
+    const email = req.body.email;
+    let password = req.body.password;
+    password = crypto_js_1.default.AES.encrypt(password, 'groupEA2022').toString();
+    const user = yield User_1.default.findOne({ email });
     if (!user) {
         return res.status(404).send('The email does not exist');
     }
-    const validPassword = crypto_js_1.default.AES.decrypt(user.password, 'groupEA2022').toString(crypto_js_1.default.enc.Utf8);
-    if (!validPassword) {
+    else if (password.match(user.password) === true) {
+        const token = jsonwebtoken_1.default.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+            expiresIn: 60 * 60 * 24
+        });
+        res.status(200).json({ auth: true, token });
+    }
+    else {
         return res.status(401).json({ auth: false, token: null });
     }
-    const token = jsonwebtoken_1.default.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
-        expiresIn: 60 * 60 * 24
-    });
-    res.status(200).json({ auth: true, token });
 });
 const profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.params.id, { password: 0 });
