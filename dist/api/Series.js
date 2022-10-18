@@ -14,6 +14,7 @@ router.delete('/:id', seriesController_1.default.deleteSerie);
 router.get('/:id/episodes', seriesController_1.default.getEpisodes);
 router.get('/:id/episodes/:id_episode', seriesController_1.default.getEpisode);
 router.post('/:id/episodes', seriesController_1.default.addEpisode);
+// router.post('/:id/episodes', seriesController.addEpisode);
 router.put('/:id/episodes/:id_episode', seriesController_1.default.updateEpisode);
 router.delete('/:id/episodes/:id_episode', seriesController_1.default.deleteEpisode);
 router.get('/:id/comments', seriesController_1.default.getComments);

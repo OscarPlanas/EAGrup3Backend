@@ -29,14 +29,37 @@ const booking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json({ auth: true });
 });
 const cancel = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const name = req.body.name;
+    /*const name = req.body.name;
     const userID = req.body.user;
-    const findbooking = yield Booking_1.default.findOne({ name, user: userID });
+    const findbooking = await Booking.findOne({ name, user: userID });
     if (!findbooking) {
         return res.status(400).json({ message: 'Booking not found' });
     }
-    yield Booking_1.default.findByIdAndDelete(findbooking._id);
-    res.status(200).json({ auth: true });
+    await Booking.findByIdAndDelete(findbooking.id);
+    res.status(200).json({ auth: true });*/
+    try {
+        const book = yield Booking_1.default.findById(req.params.id);
+        if (!book) {
+            return res.status(404).send('Booking not found');
+        }
+        yield Booking_1.default.findByIdAndDelete(req.params.id);
+        res.status(200).json({ status: 'Booking deleted' });
+    }
+    catch (error) {
+        res.status(500).send(error);
+    }
+    // const book = await Booking.findById(req.params.id);
+    // const name = req.body.name;
+    // const id = req.body.user;
+    // const find = await Booking.findOne({id: book.id});
+    /*if (!book) {
+        return res.status(400).json({ message: 'Booking not found' });
+    }
+    const user = await Booking.findByIdAndRemove(book.id);
+    return res.json({
+      message: "Booking deleted",
+      user
+    });*/
 });
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const bookings = yield Booking_1.default.find().populate('user');
