@@ -65,6 +65,24 @@ const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(200).json({ status: 'Comment saved' });
     });
 });
+/*const addParticipant = async (req: Request, res: Response) => {
+    const event = await Event.findById(req.params.id_event);
+    if (!event) {
+        return res.status(404).send('The event does not exist');
+    }
+    const participants = new Comment(req.body);
+    await comment.save( (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        event.update(
+            { _id: event._id },
+            { $push: { comments: comment._id } },
+        );
+        event.save();
+        res.status(200).json({ status: 'Comment saved' });
+    });
+}*/
 const getComments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const event = yield Event_1.default.findById(req.params.id_event);
     if (!event) {

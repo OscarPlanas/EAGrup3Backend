@@ -46,7 +46,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json({ auth: true, token });
 });
 const profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findById(req.params.userId, { password: 0 });
+    const user = yield User_1.default.findById(req.params.id, { password: 0 });
     if (!user) {
         return res.status(404).send('No user found.');
     }
@@ -60,10 +60,20 @@ const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.params.id);
     res.json(user);
 });
+/*const deleteUser = async (req: Request, res: Response) => {
+    await User.findByIdAndDelete(req.params.id, (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.status(200).json({ status: 'User deleted' });
+    });
+};*/
 exports.default = {
     register,
     login,
     profile,
-    getall
+    getall,
+    getone
+    // deleteUser
 };
 //# sourceMappingURL=userController.js.map

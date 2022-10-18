@@ -37,7 +37,7 @@ const login = async (req: Request, res : Response) => {
 };
 
 const profile = async (req: Request, res: Response) => {
-	const user = await User.findById(req.params.userId, { password: 0 });
+	const user = await User.findById(req.params.id, { password: 0 });
 	if (!user) {
 		return res.status(404).send('No user found.');
 	}
@@ -54,9 +54,20 @@ const getone = async (req: Request, res: Response) => {
 	res.json(user);
 };
 
+/*const deleteUser = async (req: Request, res: Response) => {
+	await User.findByIdAndDelete(req.params.id, (err: any) => {
+		if (err) {
+			return res.status(500).send(err);
+		}
+		res.status(200).json({ status: 'User deleted' });
+	});
+};*/
+
 export default {
 	register,
 	login,
 	profile,
-	getall
+	getall,
+	getone
+	// deleteUser
 };

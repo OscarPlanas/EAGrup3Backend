@@ -6,7 +6,8 @@ const router = Router();
 
 router.post('/register', body('password').isLength({ min: 6 }), body('email').isEmail(), userController.register);
 router.post('/login', userController.login);
-router.get('/profile', userController.profile);
+router.get('/profile/:id', userController.profile);
 router.get('/', userController.getall);
+// router.delete('/:id', userController.deleteUser);
 
 export default router;
