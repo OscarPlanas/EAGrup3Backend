@@ -3,12 +3,12 @@ import Comment from '../model/Comment';
 import { Request, Response } from 'express';
 
 const getall = async (req: Request, res: Response) => {
-    const events = await Event.find();
+    const events = await Event.find().populate('owner').populate('participants').populate('comments');
     res.json(events);
 }
 
 const getone = async (req: Request, res: Response) => {
-    const event = await Event.findById(req.params.id_event);
+    const event = await Event.findById(req.params.id_event).populate('owner').populate('participants').populate('comments');
     if (!event) {
         return res.status(404).send('The event does not exist');
     }
@@ -63,7 +63,7 @@ const addComment = async (req: Request, res: Response) => {
 }
 
 const getComments = async (req: Request, res: Response) => {
-    const event = await Event.findById(req.params.id_event);
+    const event = await Event.findById(req.params.id_event).populate('comments');
     if (!event) {
         return res.status(404).send('The event does not exist');
     }
@@ -71,7 +71,7 @@ const getComments = async (req: Request, res: Response) => {
 }
 
 const getComment = async (req: Request, res: Response) => {
-    const event = await Event.findById(req.params.id_event);
+    const event = await Event.findById(req.params.id_event).populate('comments');
     if (!event) {
         return res.status(404).send('The event does not exist');
     }
