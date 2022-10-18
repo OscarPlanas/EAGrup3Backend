@@ -7,7 +7,7 @@ const bookingController_1 = __importDefault(require("../controller/bookingContro
 const express_1 = require("express");
 const router = (0, express_1.Router)();
 router.post('/booking', bookingController_1.default.booking);
-router.post('/cancel', bookingController_1.default.cancel);
+router.delete('/cancel/:id', bookingController_1.default.cancel);
 router.get('/', bookingController_1.default.getall);
 exports.default = router;
 //# sourceMappingURL=Booking.js.map

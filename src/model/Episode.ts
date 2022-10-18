@@ -1,7 +1,11 @@
 import { Schema, model } from 'mongoose';
 
 const Episode = new Schema({
-    id_serie: Number,
+    serie: {
+		type: Schema.Types.ObjectId,
+		ref: "Series"
+	},
+    // id_serie: Number,
     name: String,
     air_date: Date,
     season_number: Number,

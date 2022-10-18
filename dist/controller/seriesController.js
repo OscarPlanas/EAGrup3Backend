@@ -114,19 +114,49 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     });
 });
 const addEpisode = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.findById(req.params.id_serie);
-    if (!series) {
-        return res.status(404).send('The series does not exist');
-    }
-    const episode = new Episode_1.default(req.body);
-    yield episode.save((err) => {
-        if (err) {
-            return res.status(500).send(err);
+    // const series = await Series.findById(req.body.serie);
+    // const series = req.body.serie;
+    try {
+        const serie = yield Series_1.default.findById(req.params.id);
+        // const name = req.body.name;
+        // const air_date = req.body.air_date;
+        // const episode_number = req.body.episode_number;
+        // const season_number = req.body.season_number;
+        if (!serie) {
+            return res.status(404).send('The series does not exist');
         }
-        series.update({ _id: series._id }, { $push: { episodes: episode._id } });
-        series.save();
-        res.status(200).json({ status: 'Episode saved' });
-    });
+        const episode = new Episode_1.default({
+            serie: serie.id,
+            name: req.body.name,
+            air_date: req.body.air_date,
+            season_number: req.body.season_number,
+            episode_number: req.body.episode_number,
+        });
+        yield episode.save((err) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            serie.update({ _id: serie.id }, { $push: { episodes: episode } });
+            serie.save();
+            res.status(200).json({ status: 'Episode saved' + episode });
+        });
+    }
+    catch (error) {
+        res.status(500).send(error);
+    }
+    /*try {
+        const book = await Booking.findById(req.params.id);
+        if (!book) {
+            return res.status(404).send('Booking not found');
+        }
+        await Booking.findByIdAndDelete(req.params.id);
+        res.status(200).json({ status: 'Booking deleted' });
+    } catch (error) {
+        res.status(500).send(error);
+    }*/
+    /*
+    await newBooking.save();
+    res.status(200).json({ auth: true });*/
 });
 const getEpisodes = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const series = yield Series_1.default.findById(req.params.id_serie);
