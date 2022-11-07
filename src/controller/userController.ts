@@ -6,10 +6,12 @@ import { body, validationResult } from 'express-validator';
 
 const register = async (req: Request, res: Response) => {
 	const name = req.body.name;
+	const username = req.body.username;
+	const birthdate = req.body.birthdate;
 	const email = req.body.email;
 	let password = req.body.password;
 	password = CryptoJS.AES.encrypt(password, 'groupEA2022').toString();
-	const newUser = new User({ name, email, password });
+	const newUser = new User({ name, username, email, password, birthdate });
 	await newUser.save( (err: any) => {
 		if (err) {
 			return res.status(500).send(err);

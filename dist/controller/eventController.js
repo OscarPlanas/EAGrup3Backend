@@ -15,11 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Event_1 = __importDefault(require("../model/Event"));
 const Comment_1 = __importDefault(require("../model/Comment"));
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const events = yield Event_1.default.find();
+    const events = yield Event_1.default.find().populate('owner').populate('participants').populate('comments');
     res.json(events);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const event = yield Event_1.default.findById(req.params.id_event);
+    const event = yield Event_1.default.findById(req.params.id_event).populate('owner').populate('participants').populate('comments');
     if (!event) {
         return res.status(404).send('The event does not exist');
     }
@@ -84,14 +84,14 @@ const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     });
 }*/
 const getComments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const event = yield Event_1.default.findById(req.params.id_event);
+    const event = yield Event_1.default.findById(req.params.id_event).populate('comments');
     if (!event) {
         return res.status(404).send('The event does not exist');
     }
     res.json(event.comments);
 });
 const getComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const event = yield Event_1.default.findById(req.params.id_event);
+    const event = yield Event_1.default.findById(req.params.id_event).populate('comments');
     if (!event) {
         return res.status(404).send('The event does not exist');
     }

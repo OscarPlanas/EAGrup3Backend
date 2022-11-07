@@ -17,10 +17,12 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const crypto_js_1 = __importDefault(require("crypto-js"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const name = req.body.name;
+    const username = req.body.username;
+    const birthdate = req.body.birthdate;
     const email = req.body.email;
     let password = req.body.password;
     password = crypto_js_1.default.AES.encrypt(password, 'groupEA2022').toString();
-    const newUser = new User_1.default({ name, email, password });
+    const newUser = new User_1.default({ name, username, email, password, birthdate });
     yield newUser.save((err) => {
         if (err) {
             return res.status(500).send(err);
