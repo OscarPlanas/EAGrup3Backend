@@ -18,15 +18,18 @@ const booking = async (req: Request, res: Response) => {
 };
 
 const cancel = async (req: Request, res: Response) => {
-	const name = req.body.name;
-	const userID = req.body.user;
-	const findbooking = await Booking.findOne({ name, user: userID });
-	if (!findbooking) {
-		return res.status(400).json({ message: 'Booking not found' });
+	try {
+		const book = await Booking.findById(req.params.id);
+		if (!book) {
+			return res.status(404).send('Booking not found');
+		}
+		await Booking.findByIdAndDelete(req.params.id);
+		res.status(200).json({ status: 'Booking deleted' });
+	} catch (error) {
+		res.status(500).send(error);
 	}
-	await Booking.findByIdAndDelete(findbooking._id);
-	res.status(200).json({ auth: true });
 };
+
 
 const getall = async (req: Request, res: Response) => {
 	const bookings = await Booking.find().populate('user');

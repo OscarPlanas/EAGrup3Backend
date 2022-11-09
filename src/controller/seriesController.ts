@@ -41,12 +41,13 @@ const update = async (req: Request, res: Response) => {
 };
 
 const deleteSerie = async (req: Request, res: Response) => {
-    await Series.findByIdAndDelete(req.params.id_serie, (err: any) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.status(200).json({ status: 'Serie deleted' });
-    });
+    try {
+		const user = await Series.findOneAndDelete({ id: req.params.id}).catch(Error);
+		res.status(200).json({ status: 'Serie deleted' });
+	}
+	catch (error) {
+		res.status(500).json({message: 'Serie not found', error });
+	}
 };
 
 const addComment = async (req: Request, res: Response) => {

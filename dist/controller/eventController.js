@@ -43,12 +43,13 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield Event_1.default.findByIdAndDelete(req.params.id_event, (err) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
+    try {
+        const user = yield Event_1.default.findOneAndDelete({ id: req.params.id }).catch(Error);
         res.status(200).json({ status: 'Event deleted' });
-    });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Event not found', error });
+    }
 });
 const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const event = yield Event_1.default.findById(req.params.id_event);

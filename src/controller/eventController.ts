@@ -36,12 +36,13 @@ const update = async (req: Request, res: Response) => {
 }
 
 const deleteEvent = async (req: Request, res: Response) => {
-    await Event.findByIdAndDelete(req.params.id_event, (err: any) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.status(200).json({ status: 'Event deleted' });
-    });
+    try {
+		const user = await Event.findOneAndDelete({ id: req.params.id}).catch(Error);
+		res.status(200).json({ status: 'Event deleted' });
+	}
+	catch (error) {
+		res.status(500).json({message: 'Event not found', error });
+	}
 }
 
 const addComment = async (req: Request, res: Response) => {

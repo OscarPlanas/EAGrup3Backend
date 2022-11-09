@@ -29,14 +29,17 @@ const booking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json({ auth: true });
 });
 const cancel = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const name = req.body.name;
-    const userID = req.body.user;
-    const findbooking = yield Booking_1.default.findOne({ name, user: userID });
-    if (!findbooking) {
-        return res.status(400).json({ message: 'Booking not found' });
+    try {
+        const book = yield Booking_1.default.findById(req.params.id);
+        if (!book) {
+            return res.status(404).send('Booking not found');
+        }
+        yield Booking_1.default.findByIdAndDelete(req.params.id);
+        res.status(200).json({ status: 'Booking deleted' });
     }
-    yield Booking_1.default.findByIdAndDelete(findbooking._id);
-    res.status(200).json({ auth: true });
+    catch (error) {
+        res.status(500).send(error);
+    }
 });
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const bookings = yield Booking_1.default.find().populate('user');

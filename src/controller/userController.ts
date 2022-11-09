@@ -56,20 +56,21 @@ const getone = async (req: Request, res: Response) => {
 	res.json(user);
 };
 
-/*const deleteUser = async (req: Request, res: Response) => {
-	await User.findByIdAndDelete(req.params.id, (err: any) => {
-		if (err) {
-			return res.status(500).send(err);
-		}
+const deleteUser = async (req: Request, res: Response) => {
+	try {
+		const user = await User.findOneAndDelete({ id: req.params.id}).catch(Error);
 		res.status(200).json({ status: 'User deleted' });
-	});
-};*/
+	}
+	catch (error) {
+		res.status(500).json({message: 'User not found', error });
+	}
+};
 
 export default {
 	register,
 	login,
 	profile,
 	getall,
-	getone
-	// deleteUser
+	getone,
+	deleteUser
 };

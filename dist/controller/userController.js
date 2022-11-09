@@ -62,20 +62,21 @@ const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.params.id);
     res.json(user);
 });
-/*const deleteUser = async (req: Request, res: Response) => {
-    await User.findByIdAndDelete(req.params.id, (err: any) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
+const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield User_1.default.findOneAndDelete({ id: req.params.id }).catch(Error);
         res.status(200).json({ status: 'User deleted' });
-    });
-};*/
+    }
+    catch (error) {
+        res.status(500).json({ message: 'User not found', error });
+    }
+});
 exports.default = {
     register,
     login,
     profile,
     getall,
-    getone
-    // deleteUser
+    getone,
+    deleteUser
 };
 //# sourceMappingURL=userController.js.map
