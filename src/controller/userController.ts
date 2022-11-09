@@ -24,18 +24,27 @@ const register = async (req: Request, res: Response) => {
 };
 
 const login = async (req: Request, res : Response) => {
-	const user = await User.findOne({ email: req.body.email });
-	if (!user) {
-		return res.status(404).send('The email does not exist');
+	try {
+		const user = await User.findOne({ email: req.body.email });
+		if (!user) {
+			return res.status(404).send('The email does not exist');
+		}
+		const validPassword = CryptoJS.AES.decrypt(user.password.toString(), 'groupEA2022').toString(CryptoJS.enc.Utf8);
+
+		// const validPassword = CryptoJS.AES.decrypt(user.password, 'groupEA2022').toString(CryptoJS.enc.Utf8);
+		if (validPassword !== req.body.password) {
+			return res.status(402).json({ auth: false, token: null});
+		}
+
+		const token = jwt.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+			expiresIn: 60 * 60 * 24
+		});
+		res.status(201).json({ auth: true, token});
+
 	}
-	const validPassword = CryptoJS.AES.decrypt(user.password, 'groupEA2022').toString(CryptoJS.enc.Utf8);
-	if (!validPassword) {
-		return res.status(401).json({ auth: false, token: null });
+	catch (error) {
+		res.status(401).send('User not found');
 	}
-	const token = jwt.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
-		expiresIn: 60 * 60 * 24
-	});
-	res.status(200).json({ auth: true, token });
 };
 
 const profile = async (req: Request, res: Response) => {

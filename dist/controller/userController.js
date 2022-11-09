@@ -34,18 +34,24 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json({ auth: true, token });
 });
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findOne({ email: req.body.email });
-    if (!user) {
-        return res.status(404).send('The email does not exist');
+    try {
+        const user = yield User_1.default.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(404).send('The email does not exist');
+        }
+        const validPassword = crypto_js_1.default.AES.decrypt(user.password.toString(), 'groupEA2022').toString(crypto_js_1.default.enc.Utf8);
+        // const validPassword = CryptoJS.AES.decrypt(user.password, 'groupEA2022').toString(CryptoJS.enc.Utf8);
+        if (validPassword !== req.body.password) {
+            return res.status(402).json({ auth: false, token: null });
+        }
+        const token = jsonwebtoken_1.default.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+            expiresIn: 60 * 60 * 24
+        });
+        res.status(201).json({ auth: true, token });
     }
-    const validPassword = crypto_js_1.default.AES.decrypt(user.password, 'groupEA2022').toString(crypto_js_1.default.enc.Utf8);
-    if (!validPassword) {
-        return res.status(401).json({ auth: false, token: null });
+    catch (error) {
+        res.status(401).send('User not found');
     }
-    const token = jsonwebtoken_1.default.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
-        expiresIn: 60 * 60 * 24
-    });
-    res.status(200).json({ auth: true, token });
 });
 const profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.params.id, { password: 0 });
