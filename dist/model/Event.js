@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const Event = new mongoose_1.Schema({
     title: String,
+    image: String,
     description: String,
     owner: {
         type: mongoose_1.Schema.Types.ObjectId,

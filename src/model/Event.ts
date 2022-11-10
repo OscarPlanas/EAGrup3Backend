@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 
 const Event = new Schema({
 	title: String,
+    image: String,
     description: String,
     owner: {
         type: Schema.Types.ObjectId,

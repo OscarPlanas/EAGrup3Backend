@@ -16,5 +16,6 @@ router.get('/:id_event/comments/:id_comment', eventController_1.default.getComme
 router.post('/:id_event/comments', eventController_1.default.addComment);
 router.put('/:id_event/comments/:id_comment', eventController_1.default.updateComment);
 router.delete('/:id_event/comments/:id_comment', eventController_1.default.deleteComment);
+router.post('/', eventController_1.default.addEvent);
 exports.default = router;
 //# sourceMappingURL=Event.js.map

@@ -137,6 +137,14 @@ const deleteComment = async (req: Request, res: Response) => {
         res.status(200).json({ status: 'Comment deleted' });
     });
 }
+const addEvent = async (req: Request, res: Response) => {
+    const event = new Event(req.body);
+    await event.save( (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+    });
+};
 
 export default {
     getall,
@@ -148,5 +156,6 @@ export default {
     getComments,
     getComment,
     updateComment,
-    deleteComment
+    deleteComment,
+    addEvent
 }

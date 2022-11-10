@@ -132,6 +132,14 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(200).json({ status: 'Comment deleted' });
     });
 });
+const addEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const event = new Event_1.default(req.body);
+    yield event.save((err) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+    });
+});
 exports.default = {
     getall,
     getone,
@@ -142,6 +150,7 @@ exports.default = {
     getComments,
     getComment,
     updateComment,
-    deleteComment
+    deleteComment,
+    addEvent
 };
 //# sourceMappingURL=eventController.js.map
