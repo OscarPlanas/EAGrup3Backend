@@ -4,11 +4,13 @@ import CryptoJS from 'crypto-js';
 import { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 
+
 const register = async (req: Request, res: Response) => {
 	const name = req.body.name;
 	const username = req.body.username;
 	const birthdate = req.body.birthdate;
 	const email = req.body.email;
+	
 	let password = req.body.password;
 	password = CryptoJS.AES.encrypt(password, 'groupEA2022').toString();
 	const newUser = new User({ name, username, email, password, birthdate });
@@ -75,11 +77,29 @@ const deleteUser = async (req: Request, res: Response) => {
 	}
 };
 
+const update = async (req: Request, res: Response) => {
+	try{
+		const name = req.body.name;
+		const username = req.body.username;
+		const birthdate = req.body.birthdate;
+		const email = req.body.email;
+		const user = await User.findByIdAndUpdate(req.body._id, {
+			name, username, birthdate, email
+		}, {new: true});
+		res.json(user).status(200);
+	}catch (error) {
+		res.status(401).send(error);
+	}
+};
+
+
+
 export default {
 	register,
 	login,
 	profile,
 	getall,
 	getone,
-	deleteUser
+	deleteUser,
+	update
 };

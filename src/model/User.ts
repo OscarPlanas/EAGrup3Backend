@@ -9,3 +9,4 @@ const User = new Schema({
 });
 
 export default model('User', User);
+

@@ -77,12 +77,28 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).json({ message: 'User not found', error });
     }
 });
+const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const name = req.body.name;
+        const username = req.body.username;
+        const birthdate = req.body.birthdate;
+        const email = req.body.email;
+        const user = yield User_1.default.findByIdAndUpdate(req.body._id, {
+            name, username, birthdate, email
+        }, { new: true });
+        res.json(user).status(200);
+    }
+    catch (error) {
+        res.status(401).send(error);
+    }
+});
 exports.default = {
     register,
     login,
     profile,
     getall,
     getone,
-    deleteUser
+    deleteUser,
+    update
 };
 //# sourceMappingURL=userController.js.map

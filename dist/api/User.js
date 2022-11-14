@@ -12,5 +12,6 @@ router.post('/login', userController_1.default.login);
 router.get('/profile/:id', userController_1.default.profile);
 router.get('/', userController_1.default.getall);
 router.delete('/:id', userController_1.default.deleteUser);
+router.put('/', userController_1.default.update);
 exports.default = router;
 //# sourceMappingURL=User.js.map
