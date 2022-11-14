@@ -69,11 +69,16 @@ const getone = async (req: Request, res: Response) => {
 
 const deleteUser = async (req: Request, res: Response) => {
 	try {
-		const user = await User.findOneAndDelete({ id: req.params.id}).catch(Error);
+
+		const user = await User.findOne({ id: req.params.id});
+		if (!user){
+			return res.status(500).json({message: 'User not found' });
+		}
+		await User.findByIdAndRemove(req.params.id);
 		res.status(200).json({ status: 'User deleted' });
 	}
 	catch (error) {
-		res.status(500).json({message: 'User not found', error });
+		res.status(500).json({message: 'error unknown', error });
 	}
 };
 

@@ -9,7 +9,7 @@ import Event from "./api/Event";
 
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5432;
 
 app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json())
@@ -24,7 +24,7 @@ app.get('/', ( req: express.Request, res: express.Response ) => {
 	res.send('Hello World!')
 })
 
-mongoose.connect('mongodb://mongo:27017/TVTracker', { useNewUrlParser : true } as ConnectOptions)
+mongoose.connect('mongodb://localhost/TVTracker', { useNewUrlParser : true } as ConnectOptions)
 	.then(() => {
 		// tslint:disable-next-line:no-console
         app.listen(port, () => console.log('Server corriendo en el puerto ' + port));
