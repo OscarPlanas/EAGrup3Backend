@@ -70,10 +70,6 @@ const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield User_1.default.findOne({ id: req.params.id });
-        if (!user) {
-            return res.status(500).json({ message: 'User not found' });
-        }
         yield User_1.default.findByIdAndRemove(req.params.id);
         res.status(200).json({ status: 'User deleted' });
     }
