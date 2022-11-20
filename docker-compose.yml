@@ -5,17 +5,17 @@ services:
     restart: always
     build: .
     ports:
-      - '8001:4000'
-    depends_on:
+      - '5432:5432'
+    links:
       - mongo
   mongo:
     container_name: EA-BackEnd-Mongo
     image: mongo
-    expose:
-      - '27017'
-    restart: always
     ports:
       - '27017:27017'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
     volumes:
       - backendDB:/data/db
   

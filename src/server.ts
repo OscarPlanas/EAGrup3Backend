@@ -24,7 +24,7 @@ app.get('/', ( req: express.Request, res: express.Response ) => {
 	res.send('Hello World!')
 })
 
-mongoose.connect('mongodb://localhost/TVTracker', { useNewUrlParser : true } as ConnectOptions)
+mongoose.connect('mongodb://mongo/TVTracker', { useNewUrlParser : true } as ConnectOptions)
 	.then(() => {
 		// tslint:disable-next-line:no-console
         app.listen(port, () => console.log('Server corriendo en el puerto ' + port));
