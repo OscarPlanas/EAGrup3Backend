@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = __importDefault(require("../model/User"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const crypto_js_1 = __importDefault(require("crypto-js"));
+const secretoJWT = 'NuestraClaveEA3';
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const name = req.body.name;
     const username = req.body.username;
@@ -28,7 +29,8 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(500).send(err);
         }
     });
-    const token = jsonwebtoken_1.default.sign({ id: newUser._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+    const session = { id: username };
+    const token = jsonwebtoken_1.default.sign({ id: newUser._id }, secretoJWT, {
         expiresIn: 60 * 60 * 24
     });
     res.status(200).json({ auth: true, token });
@@ -44,7 +46,8 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (validPassword !== req.body.password) {
             return res.status(402).json({ auth: false, token: null });
         }
-        const token = jsonwebtoken_1.default.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+        const session = { id: user.username };
+        const token = jsonwebtoken_1.default.sign({ id: user._id }, secretoJWT, {
             expiresIn: 60 * 60 * 24
         });
         res.status(201).json({ auth: true, token });

@@ -3,7 +3,9 @@ import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 import { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
+import IJwtPayload from '../model/IJwtPayload';
 
+const secretoJWT: string = 'NuestraClaveEA3';
 
 const register = async (req: Request, res: Response) => {
 	const name = req.body.name;
@@ -19,7 +21,9 @@ const register = async (req: Request, res: Response) => {
 			return res.status(500).send(err);
 		}
 	});
-	const token = jwt.sign({ id: newUser._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+	const session = { id: username } as IJwtPayload;
+
+	const token = jwt.sign({ id: newUser._id }, secretoJWT, {
 		expiresIn: 60 * 60 * 24
 	});
 	res.status(200).json({ auth: true, token });
@@ -31,14 +35,16 @@ const login = async (req: Request, res : Response) => {
 		if (!user) {
 			return res.status(404).send('The email does not exist');
 		}
+
 		const validPassword = CryptoJS.AES.decrypt(user.password.toString(), 'groupEA2022').toString(CryptoJS.enc.Utf8);
 
 		// const validPassword = CryptoJS.AES.decrypt(user.password, 'groupEA2022').toString(CryptoJS.enc.Utf8);
 		if (validPassword !== req.body.password) {
 			return res.status(402).json({ auth: false, token: null});
 		}
+		const session = { id: user.username } as IJwtPayload;
 
-		const token = jwt.sign({ id: user._id }, 'yyt#KInN7Q9X3m&$ydtbZ7Z4fJiEtA6uHIFzvc@347SGHAjV4E', {
+		const token = jwt.sign({ id: user._id }, secretoJWT, {
 			expiresIn: 60 * 60 * 24
 		});
 		res.status(201).json({ auth: true, token});
