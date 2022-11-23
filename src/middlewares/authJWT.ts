@@ -17,7 +17,7 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
 
         const decoded = jwt.verify(token, secretoJWT) as IJwtPayload;
         console.log("verifyToken");
-        req.userid = decoded.id;
+        req.userId = decoded.id;
         const user = await User.findById(req.userId, { password: 0 });
         console.log(user);
         if (!user) {
@@ -31,7 +31,7 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
 
 export async function isOwner (req: Request, res: Response, next: NextFunction) {
     try {
-        const user = await User.findById(req.userid);
+        const user = await User.findById(req.userId);
 
         next();
     } catch (error) {

@@ -32,15 +32,17 @@ const register = async (req: Request, res: Response) => {
 const login = async (req: Request, res : Response) => {
 	try {
 		const user = await User.findOne({ email: req.body.email });
+		
 		if (!user) {
 			return res.status(404).send('The email does not exist');
 		}
-
-		const validPassword = CryptoJS.AES.decrypt(user.password.toString(), 'groupEA2022').toString(CryptoJS.enc.Utf8);
+		const pass = req.body.password;
+		//user.password?.toString(),
+		const validPassword = CryptoJS.AES.decrypt(user.password!.toString(), 'groupEA2022').toString(CryptoJS.enc.Utf8);
 
 		// const validPassword = CryptoJS.AES.decrypt(user.password, 'groupEA2022').toString(CryptoJS.enc.Utf8);
 		if (validPassword !== req.body.password) {
-			return res.status(402).json({ auth: false, token: null});
+			return res.status(402).json({ auth: false, token: null, validPassword, pass});
 		}
 		const session = { id: user.username } as IJwtPayload;
 

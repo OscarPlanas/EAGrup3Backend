@@ -41,10 +41,12 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!user) {
             return res.status(404).send('The email does not exist');
         }
+        const pass = req.body.password;
+        //user.password?.toString(),
         const validPassword = crypto_js_1.default.AES.decrypt(user.password.toString(), 'groupEA2022').toString(crypto_js_1.default.enc.Utf8);
         // const validPassword = CryptoJS.AES.decrypt(user.password, 'groupEA2022').toString(CryptoJS.enc.Utf8);
         if (validPassword !== req.body.password) {
-            return res.status(402).json({ auth: false, token: null });
+            return res.status(402).json({ auth: false, token: null, validPassword, pass });
         }
         const session = { id: user.username };
         const token = jsonwebtoken_1.default.sign({ id: user._id }, secretoJWT, {
