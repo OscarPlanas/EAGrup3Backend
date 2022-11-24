@@ -11,6 +11,7 @@ const User_1 = __importDefault(require("./api/User"));
 const Booking_1 = __importDefault(require("./api/Booking"));
 const Series_1 = __importDefault(require("./api/Series"));
 const Event_1 = __importDefault(require("./api/Event"));
+const auth_1 = __importDefault(require("./api/auth"));
 const app = (0, express_1.default)();
 const port = process.env.PORT || 5432;
 app.use(body_parser_1.default.urlencoded({ extended: true }));
@@ -20,6 +21,7 @@ app.use('/api/users', User_1.default);
 app.use('/api/bookings', Booking_1.default);
 app.use('/api/series', Series_1.default);
 app.use('/api/events', Event_1.default);
+app.use('/api/auth', auth_1.default);
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });

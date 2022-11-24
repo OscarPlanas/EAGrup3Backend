@@ -29,7 +29,7 @@ const register = async (req: Request, res: Response) => {
 	res.status(200).json({ auth: true, token });
 };
 
-const login = async (req: Request, res : Response) => {
+/*const login = async (req: Request, res : Response) => {
 	try {
 		const user = await User.findOne({ email: req.body.email });
 		
@@ -44,7 +44,7 @@ const login = async (req: Request, res : Response) => {
 		if (validPassword !== req.body.password) {
 			return res.status(402).json({ auth: false, token: null, validPassword, pass});
 		}
-		const session = { id: user.username } as IJwtPayload;
+		const session = { id: user.email } as IJwtPayload;
 
 		const token = jwt.sign({ id: user._id }, secretoJWT, {
 			expiresIn: 60 * 60 * 24
@@ -55,7 +55,7 @@ const login = async (req: Request, res : Response) => {
 	catch (error) {
 		res.status(401).send('User not found');
 	}
-};
+};*/
 
 const profile = async (req: Request, res: Response) => {
 	const user = await User.findById(req.params.id, { password: 0 });
@@ -104,7 +104,7 @@ const update = async (req: Request, res: Response) => {
 
 export default {
 	register,
-	login,
+	//login,
 	profile,
 	getall,
 	getone,

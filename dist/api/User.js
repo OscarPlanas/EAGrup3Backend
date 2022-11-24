@@ -9,7 +9,7 @@ const express_validator_1 = require("express-validator");
 const authJWT_1 = require("../middlewares/authJWT");
 const router = (0, express_1.Router)();
 router.post('/register', (0, express_validator_1.body)('password').isLength({ min: 6 }), (0, express_validator_1.body)('email').isEmail(), userController_1.default.register);
-router.post('/login', userController_1.default.login);
+//router.post('/login', userController.login);
 router.get('/profile/:id', userController_1.default.profile);
 router.get('/', userController_1.default.getall);
 router.delete('/:id', [authJWT_1.verifyToken, authJWT_1.isOwner], userController_1.default.deleteUser);
