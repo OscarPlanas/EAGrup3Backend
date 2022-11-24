@@ -134,10 +134,12 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 const addEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const event = new Event_1.default(req.body);
+    console.log("pasa por evento", event);
     yield event.save((err) => {
         if (err) {
             return res.status(500).send(err);
         }
+        res.status(200).json({ status: 'Event saved' });
     });
 });
 exports.default = {

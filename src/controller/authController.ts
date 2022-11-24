@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import CryptoJS from 'crypto-js';
 import User from '../model/User';
 import IJwtPayload from '../model/IJwtPayload';
+import { header } from 'express-validator';
 
 const secretoJWT: string = 'NuestraClaveEA3';
 
@@ -57,7 +58,8 @@ export async function login(req: Request, res: Response): Promise<Response> {
         const token = jwt.sign(session, secretoJWT, {
             expiresIn: 60 * 60 * 24
         });
-        return res.json({ auth: true, token, session});
+        user.token = token;
+        return res.status(201).header('x-access-token', token).json({ auth: true, token, session, user});
 		//res.status(201).json({ auth: true, token});
        
        // return res.status(401).json({auth: false, token: null});

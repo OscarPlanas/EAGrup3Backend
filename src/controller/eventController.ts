@@ -139,10 +139,12 @@ const deleteComment = async (req: Request, res: Response) => {
 }
 const addEvent = async (req: Request, res: Response) => {
     const event = new Event(req.body);
+    console.log("pasa por evento", event);
     await event.save( (err: any) => {
         if (err) {
             return res.status(500).send(err);
         }
+        res.status(200).json({ status: 'Event saved' });
     });
 };
 
