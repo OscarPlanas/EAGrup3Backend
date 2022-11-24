@@ -25,10 +25,11 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
         req.params.description = String(decoded.description);
         req.params.date = String(decoded.date.toLocaleString());
         req.params.userId = decoded.userId;
-        req.params.email = decoded.email;
+        req.params.email = String(decoded.email);
 
 
-        const user = await User.findById(req.params.id, { password: 0 });
+
+        const user = await User.findById(req.params.userId, { password: 0 });
         console.log(user);
         if (!user) {
             return res.status(404).json({message: "No user found."});
