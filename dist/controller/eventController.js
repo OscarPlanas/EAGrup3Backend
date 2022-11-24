@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Event_1 = __importDefault(require("../model/Event"));
 const Comment_1 = __importDefault(require("../model/Comment"));
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const events = yield Event_1.default.find().populate('owner').populate('participants').populate('comments');
+    const events = yield Event_1.default.find().populate('owner');
     res.json(events);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -133,13 +133,33 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     });
 });
 const addEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const event = new Event_1.default(req.body);
+    /*const event = new Event(req.body);
+    const id = event.id;
+    this.user
+    event.owner.token = undefined;
+
     console.log("pasa por evento", event);
-    yield event.save((err) => {
+    await event.save( (err: any) => {
         if (err) {
             return res.status(500).send(err);
         }
         res.status(200).json({ status: 'Event saved' });
+    });*/
+    const user = req.params.userId;
+    //const user = token.id;
+    const { title, description } = req.body;
+    console.log('Creating Event', user);
+    const newEvent = {
+        title: title,
+        owner: user,
+        description: description
+    };
+    const event = new Event_1.default(newEvent);
+    yield event.save();
+    console.log(event);
+    return res.json({
+        message: "event created",
+        event
     });
 });
 exports.default = {

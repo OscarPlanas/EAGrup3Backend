@@ -2,9 +2,11 @@ import Event from '../model/Event';
 import Comment from '../model/Comment';
 
 import { Request, Response } from 'express';
+import userController from './userController';
+import { decode } from 'punycode';
 
 const getall = async (req: Request, res: Response) => {
-    const events = await Event.find().populate('owner').populate('participants').populate('comments');
+    const events = await Event.find().populate('owner');
     res.json(events);
 }
 
@@ -138,13 +140,35 @@ const deleteComment = async (req: Request, res: Response) => {
     });
 }
 const addEvent = async (req: Request, res: Response) => {
-    const event = new Event(req.body);
+    
+    /*const event = new Event(req.body);
+    const id = event.id;
+    this.user
+    event.owner.token = undefined;
+
     console.log("pasa por evento", event);
     await event.save( (err: any) => {
         if (err) {
             return res.status(500).send(err);
         }
         res.status(200).json({ status: 'Event saved' });
+    });*/
+    const user = req.params.userId;
+    //const user = token.id;
+    const { title, description} = req.body;
+    console.log('Creating Event', user);
+    const newEvent = {
+      title: title,
+      owner: user,
+      description: description
+    }
+    const event = new Event(newEvent);
+    await event.save();
+    console.log(event);
+  
+    return res.json({
+      message: "event created",
+      event
     });
 };
 

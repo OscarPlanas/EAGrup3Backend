@@ -58,7 +58,9 @@ export async function login(req: Request, res: Response): Promise<Response> {
         const token = jwt.sign(session, secretoJWT, {
             expiresIn: 60 * 60 * 24
         });
-        user.token = token;
+        req.params.userId = token;
+        //user.id = req.params.userId;
+        console.log("Pasa por login", req.params.userId);
         return res.status(201).header('x-access-token', token).json({ auth: true, token, session, user});
 		//res.status(201).json({ auth: true, token});
        

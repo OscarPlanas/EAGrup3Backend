@@ -11,13 +11,20 @@ const secretoJWT: string = 'NuestraClaveEA3';
 
 export async function verifyToken(req: Request, res: Response, next: NextFunction) {
     //console.log('VerifyToken');
+    //const us = req.body.user;
+    //const tak = us.token;
     const ses = req.params.session;
-    const tok = req.params.token;
+    const tok = req.userId;
     console.log('VerifyToken', tok);
     //const token = req.header("x-access-token");
     const token = req.body.token || req.query.token || req.headers["x-access-token"];
+    const tokenhead = req.header("x-access-token");
 
-    console.log('VerifyToken', tok, token, ses);
+    /*let head = res.header('x-access-token');
+    head = token;*/
+
+
+    console.log('VerifyToken', tok, token, ses, tokenhead);
 
     if (!token) {
         return res.status(403).json({ message: 'No token provided', tok });
@@ -28,28 +35,26 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
 
         console.log("verifyToken", decoded);
         
-        req.params.id = decoded.id;
-        console.log("bbbbb", decoded);
+        req.params.userId = decoded.id;
 
         req.params.title = String(decoded.title);
         req.params.description = String(decoded.description);
-        console.log("c", decoded);
 
         //req.params.date = String(decoded.date.toLocaleString());
-        console.log("dddd", decoded);
-
-        req.params.userId = decoded.userId;
         req.params.email = String(decoded.email);
-        console.log("fff", decoded);
+        //req.userId = decoded.id;   
 
-
+        
 
         console.log("aaaaaaaaaaaaaa", decoded);
-        const user = await User.findById(req.params.id, { password: 0 });
+        const user = await User.findById(req.params.userId, { password: 0 });
+        //userId = user?.id;
         console.log(user);
         if (!user) {
             return res.status(404).json({message: "No user found."});
         }
+        console.log('Creating Event', req.params.userId);
+
         next();
     } catch (error) {
         return res.status(401).json({ auth: false, message: 'Unauthorized' });
