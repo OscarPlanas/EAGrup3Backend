@@ -40,11 +40,11 @@ export async function login(req: Request, res: Response): Promise<Response> {
 		//user.password?.toString(),
 		const validPassword = CryptoJS.AES.decrypt(user.password as string, 'groupEA2022').toString(CryptoJS.enc.Utf8);
 
-		// const validPassword = CryptoJS.AES.decrypt(user.password, 'groupEA2022').toString(CryptoJS.enc.Utf8);
-		/*if (validPassword !== req.body.password) {
+		//const validPassword = CryptoJS.AES.decrypt(user.password, 'groupEA2022').toString(CryptoJS.enc.Utf8);
+		if (validPassword !== req.body.password) {
 			return res.status(402).json({ auth: false, token: null, validPassword, message : 'Invalid Password'});
-		}*/
-        const ind = validPassword.localeCompare(password);
+		}
+        /*const ind = validPassword.localeCompare(password);
         if (ind === 0) {
             const session = { 'id': user.id, 'email': user.email } as IJwtPayload;
 
@@ -52,10 +52,15 @@ export async function login(req: Request, res: Response): Promise<Response> {
 			    expiresIn: 60 * 60 * 24
 		    });
             return res.json({ auth: true, token, session});
-        }
+        }*/
+        const session = { 'id': user.id, 'email': user.email } as IJwtPayload;
+        const token = jwt.sign(session, secretoJWT, {
+            expiresIn: 60 * 60 * 24
+        });
+        return res.json({ auth: true, token, session});
 		//res.status(201).json({ auth: true, token});
        
-        return res.status(401).json({auth: false, token: null});
+       // return res.status(401).json({auth: false, token: null});
 
 	}
 	catch (error) {
