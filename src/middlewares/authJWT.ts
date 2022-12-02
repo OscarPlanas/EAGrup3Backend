@@ -11,29 +11,31 @@ const secretoJWT: string = 'NuestraClaveEA3';
 
 export async function verifyToken(req: Request, res: Response, next: NextFunction) {
     console.log('VerifyToken');
-    const token = req.header("x-access-token");
+    const token = req.header("x-auth-token");
     if (!token) {
         return res.status(403).json({ message: 'No token provided' });
     }
     try {
 
-        const decoded = jwt.verify(token, secretoJWT) as IJwtPayload;
-
+        jwt.verify(token, secretoJWT);
+        
+        /*
         console.log("verifyToken");
-        req.params.id = decoded.id;
-        req.params.title = String(decoded.title);
-        req.params.description = String(decoded.description);
-        req.params.date = String(decoded.date.toLocaleString());
+        req.body.id = decoded.id;
+        req.body.title = String(decoded.title);
+        req.body.description = String(decoded.description);
+        req.body.date = String(decoded.date.toLocaleString());
         req.params.userId = decoded.userId;
         req.params.email = String(decoded.email);
+        console.log("errorparams");
+        */
 
 
-
-        const user = await User.findById(req.params.userId, { password: 0 });
-        console.log(user);
-        if (!user) {
-            return res.status(404).json({message: "No user found."});
-        }
+        // const user = await User.findById(req.params.userId, { password: 0 });
+        // console.log(user);
+        // if (!user) {
+        //     return res.status(404).json({message: "No user found."});
+        // }
         next();
     } catch (error) {
         return res.status(401).json({ auth: false, message: 'Unauthorized' });
