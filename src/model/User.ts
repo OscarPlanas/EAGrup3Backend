@@ -5,7 +5,8 @@ const User = new Schema({
 	username: String,
 	password: String,
 	birthdate: Date,
-	email: String
+	email: String,
+	avatar: String,
 	/*id: { type: Number, required: true },
   name: { type: String, required: true },
   password: { type: String, required: true},

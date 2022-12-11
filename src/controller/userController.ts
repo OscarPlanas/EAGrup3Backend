@@ -66,7 +66,7 @@ const profile = async (req: Request, res: Response) => {
 };
 
 const getall = async (req: Request, res: Response) => {
-	const users = await User.find();
+	const users = await User.find().populate('avatar');
 	res.status(200).json(users);
 };
 
@@ -91,7 +91,7 @@ const update = async (req: Request, res: Response) => {
 		const username = req.body.username;
 		const birthdate = req.body.birthdate;
 		const email = req.body.email;
-		const user = await User.findByIdAndUpdate(req.body._id, {
+		const user = await User.findByIdAndUpdate(req.params.id, {
 			name, username, birthdate, email
 		}, {new: true});
 		res.json(user).status(200);
@@ -100,6 +100,27 @@ const update = async (req: Request, res: Response) => {
 	}
 };
 
+const addAvatar = async (req: Request, res: Response) => {
+	const { idUser, avatar } = req.body;
+	try {
+		
+		const user = await User.findById(idUser);
+		//const avatar = req.body.avatar;
+		if (!user) {
+			return res.status(404).send('No user or serie found.');
+		}
+		
+		 
+		await User.findOneAndUpdate({ _id: user.id }, { $addToSet: { avatar: avatar } });
+
+		res.status(200).json({ status: 'Avatar added', avatar });
+		
+
+	}catch (error) {
+		res.status(500).json({message: 'error unknown', error });
+	}
+
+}
 
 
 export default {
@@ -109,5 +130,6 @@ export default {
 	getall,
 	getone,
 	deleteUser,
-	update
+	update,
+	addAvatar
 };

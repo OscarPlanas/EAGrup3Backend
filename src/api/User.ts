@@ -9,8 +9,9 @@ const router = Router();
 router.post('/register', body('password').isLength({ min: 6 }), body('email').isEmail(), userController.register);
 //router.post('/login', userController.login);
 router.get('/profile/:id', userController.profile);
+router.post('/:id/avatar', userController.addAvatar);
 router.get('/', userController.getall);
 router.delete('/:id',  [verifyToken, isOwner], userController.deleteUser);
-router.put('/',  [verifyToken, isOwner], userController.update);
-
+router.put('/:id', userController.update);
+router.put('/addavatar', userController.addAvatar);
 export default router;

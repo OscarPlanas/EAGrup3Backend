@@ -70,7 +70,7 @@ const profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json(user);
 });
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield User_1.default.find();
+    const users = yield User_1.default.find().populate('avatar');
     res.status(200).json(users);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -92,13 +92,28 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const username = req.body.username;
         const birthdate = req.body.birthdate;
         const email = req.body.email;
-        const user = yield User_1.default.findByIdAndUpdate(req.body._id, {
+        const user = yield User_1.default.findByIdAndUpdate(req.params.id, {
             name, username, birthdate, email
         }, { new: true });
         res.json(user).status(200);
     }
     catch (error) {
         res.status(401).send(error);
+    }
+});
+const addAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { idUser, avatar } = req.body;
+    try {
+        const user = yield User_1.default.findById(idUser);
+        //const avatar = req.body.avatar;
+        if (!user) {
+            return res.status(404).send('No user or serie found.');
+        }
+        yield User_1.default.findOneAndUpdate({ _id: user.id }, { $addToSet: { avatar: avatar } });
+        res.status(200).json({ status: 'Avatar added', avatar });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'error unknown', error });
     }
 });
 exports.default = {
@@ -108,6 +123,7 @@ exports.default = {
     getall,
     getone,
     deleteUser,
-    update
+    update,
+    addAvatar
 };
 //# sourceMappingURL=userController.js.map
