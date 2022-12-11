@@ -11,7 +11,7 @@ const getall = async (req: Request, res: Response) => {
 };
 
 const getone = async (req: Request, res: Response) => {
-    const series = await Series.findById(req.params.id).populate({ path: 'comments', populate: { path: 'user' } });
+    const series = await Series.findById(req.params.id).populate('episodes');
 
 
         // 'comments, episodes');
@@ -122,7 +122,7 @@ const deleteComment = async (req: Request, res: Response) => {
 };
 
 const addEpisode = async (req: Request, res: Response) => {
-    const series = await Series.findById(req.params.id_serie);
+    const series = await Series.findById(req.params.id);
     if (!series) {
         return res.status(404).send('The series does not exist');
     }
@@ -131,10 +131,11 @@ const addEpisode = async (req: Request, res: Response) => {
         if (err) {
             return res.status(500).send(err);
         }
-        series.update(
-            { _id: series._id },
-            { $push: { episodes: episode._id } },
-        );
+	});
+	series.updateOne({ $push: { episodes: episode._id } }, (err: any) => {
+		if (err) {
+			return res.status(500).send(err);
+		}
         series.save();
         res.status(200).json({ status: 'Episode saved' });
     });
