@@ -15,7 +15,7 @@ const register = async (req: Request, res: Response) => {
 	
 	let password = req.body.password;
 	password = CryptoJS.AES.encrypt(password, 'groupEA2022').toString();
-	const newUser = new User({ name, username, email, password, birthdate });
+	const newUser = new User({ name, username, email, password, birthdate, isAdmin: false });
 	await newUser.save( (err: any) => {
 		if (err) {
 			return res.status(500).send(err);

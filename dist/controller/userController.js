@@ -23,7 +23,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     let password = req.body.password;
     password = crypto_js_1.default.AES.encrypt(password, 'groupEA2022').toString();
-    const newUser = new User_1.default({ name, username, email, password, birthdate });
+    const newUser = new User_1.default({ name, username, email, password, birthdate, isAdmin: false });
     yield newUser.save((err) => {
         if (err) {
             return res.status(500).send(err);

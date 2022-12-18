@@ -8,6 +8,7 @@ const User = new mongoose_1.Schema({
     birthdate: Date,
     email: String,
     avatar: String,
+    isAdmin: Boolean,
     /*id: { type: Number, required: true },
   name: { type: String, required: true },
   password: { type: String, required: true},
