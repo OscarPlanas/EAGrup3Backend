@@ -12,15 +12,19 @@ const Booking_1 = __importDefault(require("./api/Booking"));
 const Series_1 = __importDefault(require("./api/Series"));
 const Event_1 = __importDefault(require("./api/Event"));
 const auth_1 = __importDefault(require("./api/auth"));
-const http_1 = require("http");
 const socket_io_1 = require("socket.io");
+const http_1 = __importDefault(require("http"));
 const app = (0, express_1.default)();
+//const app = express();
 const port = process.env.PORT || 5432;
-const httpServer = (0, http_1.createServer)();
+/** Server Handling */
+const httpServer = http_1.default.createServer(app);
+//const httpServer = createServer();
+/** Start Socket */
+//new ServerSocket(httpServer);
 const io = new socket_io_1.Server(httpServer, {
     cors: {
-        origin: true,
-        credentials: true,
+        origin: 'http://localhost:3000',
         methods: ["GET", "POST"]
     }
 });
@@ -36,13 +40,22 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 io.on("connection", (socket) => {
-    console.log("new user connected");
-    socket.on("sendMessage", (messageInfo) => {
-        console.log("sending message");
-        socket.broadcast.emit("receiveMessage", messageInfo);
+    console.log('new user connected ' + socket.id);
+    socket.on("join_room", (data) => {
+        socket.join(data);
+        console.log(`User with ID: ${socket.id} joined room: ${data}`);
+    });
+    socket.on("send_message", (data) => {
+        socket.to(data.room).emit("receive_message", data);
+        console.log(data);
+    });
+    socket.on("disconnect", () => {
+        console.log("User Disconnected", socket.id);
     });
 });
-httpServer.listen(3000);
+httpServer.listen(3001, () => {
+    console.log("SERVER RUNNING");
+});
 //mongo
 mongoose_1.default.connect('mongodb://mongo/TVTracker', { useNewUrlParser: true })
     .then(() => {

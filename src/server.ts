@@ -9,17 +9,22 @@ import Event from "./api/Event";
 import auth from "./api/auth";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
-
-
-
+import http from 'http';
 
 const app = express();
+
+
+
+//const app = express();
 const port = process.env.PORT || 5432;
-const httpServer = createServer();
+/** Server Handling */
+const httpServer = http.createServer(app);
+//const httpServer = createServer();
+/** Start Socket */
+//new ServerSocket(httpServer);
 const io = new Server(httpServer, {
   cors: {
-	origin:true,
-	credentials:true,
+	origin:'http://localhost:3000',
 	methods:["GET","POST"]
   }
 });
@@ -40,13 +45,23 @@ app.get('/', ( req: express.Request, res: express.Response ) => {
 })
 
 io.on("connection", (socket: Socket) => {
-	console.log("new user connected");
-	socket.on("sendMessage",(messageInfo) => {
-		console.log("sending message");
-		socket.broadcast.emit("receiveMessage", messageInfo);
+	console.log('new user connected ' + socket.id);
+	 socket.on("join_room", (data) => {
+	 	socket.join(data);
+	 	console.log(`User with ID: ${socket.id} joined room: ${data}`);
 	});
+	socket.on("send_message",(data) => {
+		socket.to(data.room).emit("receive_message", data);
+	 	console.log(data);
+	});
+
+	socket.on("disconnect", () => {
+		console.log("User Disconnected", socket.id);
+	  });
 });
-httpServer.listen(3000);
+httpServer.listen(3001, () => {
+	console.log("SERVER RUNNING");
+});
 
 //mongo
 mongoose.connect('mongodb://mongo/TVTracker', { useNewUrlParser : true } as ConnectOptions)
