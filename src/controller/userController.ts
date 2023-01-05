@@ -1,4 +1,5 @@
 import User from '../model/User';
+import Serie from '../model/Series';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 import { Request, Response } from 'express';
@@ -66,7 +67,7 @@ const profile = async (req: Request, res: Response) => {
 };
 
 const getall = async (req: Request, res: Response) => {
-	const users = await User.find().populate('avatar');
+	const users = await User.find().populate('serie');
 	res.status(200).json(users);
 };
 
@@ -100,7 +101,7 @@ const update = async (req: Request, res: Response) => {
 	}
 };
 
-const addAvatar = async (req: Request, res: Response) => {
+/*const addAvatar = async (req: Request, res: Response) => {
 	const { idUser, avatar } = req.body;
 	try {
 		
@@ -120,8 +121,46 @@ const addAvatar = async (req: Request, res: Response) => {
 		res.status(500).json({message: 'error unknown', error });
 	}
 
+}*/
+
+const addSerie = async (req: Request, res: Response) => {
+	const user = await User.findById(req.params.idUser);
+    if (!user) {
+        return res.status(404).send('The user does not exist');
+    }
+    const serie = await Serie.findById(req.params.idSerie);
+	if (!serie) {
+		return res.status(404).send('The series does not exist');
+	}
+
+	user.updateOne({ $push: { serie: serie._id } }, (err: any) => {
+		if (err) {
+			return res.status(500).send(err);
+		}
+        user.save();
+        res.status(200).json({ status: 'Serie saved' });
+    });
+
 }
 
+const delSerie = async (req: Request, res: Response) => {
+	const user = await User.findById(req.params.idUser);
+	if (!user) {
+		return res.status(404).send('The user does not exist');
+	}
+	const serie = await Serie.findById(req.params.idSerie);
+	if (!serie) {
+		return res.status(404).send('The series does not exist');
+	}
+
+	user.updateOne({ $pull: { serie: serie._id } }, (err: any) => {
+		if (err) {
+			return res.status(500).send(err);
+		}
+		user.save();
+		res.status(200).json({ status: 'Serie deleted' });
+	});
+}
 
 export default {
 	register,
@@ -131,5 +170,7 @@ export default {
 	getone,
 	deleteUser,
 	update,
-	addAvatar
+	//addAvatar,
+	addSerie,
+	delSerie
 };

@@ -6,8 +6,12 @@ const User = new Schema({
 	password: String,
 	birthdate: Date,
 	email: String,
-	avatar: String,
+	//avatar: String,
 	isAdmin: Boolean,
+	serie: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Series'
+	}],
 	/*id: { type: Number, required: true },
   name: { type: String, required: true },
   password: { type: String, required: true},

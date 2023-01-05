@@ -4,6 +4,8 @@ const Event = new Schema({
 	title: String,
     image: String,
     description: String,
+    lat: Number,
+    lng: Number,
     owner: {
         type: Schema.Types.ObjectId,
         ref: "User"
