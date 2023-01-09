@@ -57,7 +57,9 @@ httpServer.listen(3001, () => {
     console.log("SERVER RUNNING");
 });
 //mongo
-mongoose_1.default.connect('mongodb://mongo/TVTracker', { useNewUrlParser: true })
+//mongodb://mongo/TVTracker
+//mongodb://localhost/TVTracker
+mongoose_1.default.connect('mongodb://localhost/TVTracker', { useNewUrlParser: true })
     .then(() => {
     // tslint:disable-next-line:no-console
     app.listen(port, () => console.log('Server corriendo en el puerto ' + port));

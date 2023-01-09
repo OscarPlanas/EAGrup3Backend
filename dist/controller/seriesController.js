@@ -15,10 +15,77 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Series_1 = __importDefault(require("../model/Series"));
 const Comment_1 = __importDefault(require("../model/Comment"));
 const Episode_1 = __importDefault(require("../model/Episode"));
+const ITEMS_PER_PAGE = 4;
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.find().populate({ path: 'comments', populate: { path: 'user' } });
-    // populate('comments, episodes');
-    res.json(series);
+    try {
+        const page = req.body.page || 0;
+        const limit = req.body.limit || 5;
+        const search = req.body.search || "";
+        let sort = req.body.sort || "title";
+        // sort by "field" ascending and "test" descending
+        //query.sort('field -test');
+        let genres = req.body.genres || ["All"];
+        const genreOptions = [
+            "Action",
+            "Romance",
+            "Fantasy",
+            "Drama",
+            "Crime",
+            "Adventure",
+            "Thriller",
+            "Science-Fiction",
+            "Music",
+            "Family",
+            "Horror",
+            "Mystery"
+        ];
+        genres.includes("All")
+            ? (genres = [...genreOptions])
+            : (genres = genres);
+        // req.params.sort 
+        //     ? (sort = req.params.sort.split(",")) 
+        //     : (sort = sort);
+        // let sortBy = {};
+        // if (sort[1] === "asc") {
+        // 	sortBy[sort[0]] = "asc";
+        // } else {
+        // 	sortBy[sort[0]] = "asc";
+        // }
+        const series = yield Series_1.default.find({
+            "$or": [
+                { title: { $regex: search, $options: "i" } },
+                { overview: { $regex: search, $options: "i" } },
+            ]
+        })
+            .where("genres")
+            .in([...genres])
+            .sort(sort)
+            .skip(page * limit)
+            .limit(limit);
+        const total = yield Series_1.default.countDocuments({
+            genres: { $in: [...genres] },
+            "$or": [
+                { title: { $regex: search, $options: "i" } },
+                { overview: { $regex: search, $options: "i" } },
+            ]
+        });
+        const response = {
+            error: false,
+            total,
+            page: page + 1,
+            limit,
+            series,
+        };
+        res.status(200).json(response);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ error: true, message: "internal server error" });
+    }
+    // const page = req.params.page || 1;
+    // const series = await Series.find().populate({ path: 'comments', populate: { path: 'user' } });
+    // // populate('comments, episodes');
+    // res.json(series);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const series = yield Series_1.default.findById(req.params.id).populate('episodes');

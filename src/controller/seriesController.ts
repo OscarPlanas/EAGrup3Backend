@@ -3,11 +3,92 @@ import Comment from '../model/Comment';
 import Episode from '../model/Episode';
 import { Request, Response } from 'express';
 
-const getall = async (req: Request, res: Response) => {
-    const series = await Series.find().populate({ path: 'comments', populate: { path: 'user' } });
+const ITEMS_PER_PAGE = 4;
 
-    // populate('comments, episodes');
-    res.json(series);
+const getall = async (req: Request, res: Response) => {
+    try{
+        const page = req.body.page || 0;
+        const limit = req.body.limit || 5;
+        const search = req.body.search || "";
+        let sort = req.body.sort || "title";
+        // sort by "field" ascending and "test" descending
+        //query.sort('field -test');
+        let genres = req.body.genres || ["All"];
+        const genreOptions = [
+			"Action",
+			"Romance",
+			"Fantasy",
+			"Drama",
+			"Crime",
+			"Adventure",
+			"Thriller",
+			"Science-Fiction",
+			"Music",
+			"Family",
+            "Horror",
+            "Mystery"
+		];
+
+        genres.includes("All")
+			? (genres = [...genreOptions])
+			: (genres = genres);
+            
+		// req.params.sort 
+        //     ? (sort = req.params.sort.split(",")) 
+        //     : (sort = sort);
+
+        // let sortBy = {};
+
+		// if (sort[1] === "asc") {
+		// 	sortBy[sort[0]] = "asc";
+		// } else {
+		// 	sortBy[sort[0]] = "asc";
+		// }
+
+
+		const series = await Series.find(
+            { 
+                "$or":[
+                    {title: { $regex: search, $options: "i" } },
+                    {overview: { $regex: search, $options: "i" } },
+
+                ]})
+			.where("genres")
+			.in([...genres])
+			.sort(sort)
+			.skip(page * limit)
+			.limit(limit);
+
+		const total = await Series.countDocuments({
+			genres: { $in: [...genres] },
+			"$or":[
+                {title: { $regex: search, $options: "i" } },
+                {overview: { $regex: search, $options: "i" } },
+
+            ]
+
+		});
+
+		const response = {
+			error: false,
+			total,
+			page: page + 1,
+			limit,
+			series,
+		};
+
+		res.status(200).json(response);
+
+    }catch (err) {
+        console.log(err);
+        res.status(500).json({error:true, message:"internal server error"});
+    }
+    // const page = req.params.page || 1;
+
+    // const series = await Series.find().populate({ path: 'comments', populate: { path: 'user' } });
+
+    // // populate('comments, episodes');
+    // res.json(series);
 };
 
 const getone = async (req: Request, res: Response) => {
