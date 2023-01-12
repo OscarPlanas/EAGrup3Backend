@@ -13,21 +13,57 @@ const register = async (req: Request, res: Response) => {
 	const username = req.body.username;
 	const birthdate = req.body.birthdate;
 	const email = req.body.email;
-	
-	let password = req.body.password;
-	password = CryptoJS.AES.encrypt(password, 'groupEA2022').toString();
-	const newUser = new User({ name, username, email, password, birthdate, isAdmin: false });
-	await newUser.save( (err: any) => {
-		if (err) {
-			return res.status(500).send(err);
-		}
-	});
-	const session = { id: username } as IJwtPayload;
+	const avatar = ""
 
-	const token = jwt.sign({ id: newUser._id }, secretoJWT, {
-		expiresIn: 60 * 60 * 24
-	});
-	res.status(200).json({ auth: true, token });
+	let password = req.body.password;
+	// password = CryptoJS.AES.encrypt(password, 'groupEA2022').toString();
+	const newUser = new User({ name, username, email, password, birthdate, isAdmin: false, avatar });
+	await newUser.save()
+
+	res.status(200).json(newUser)
+
+	// await newUser.save( (err: any) => {
+	// 	if (err) {
+	// 		return res.status(500).send(err);
+	// 	}
+	// });
+	// const session = { id: username } as IJwtPayload;
+
+	// const token = jwt.sign({ id: newUser._id }, secretoJWT, {
+	// 	expiresIn: 60 * 60 * 24
+	// });
+	// res.status(200).json({ auth: true, token });
+};
+
+
+const login = async (req: Request, res: Response) => {
+	const { email, password } = req.body
+
+	const found = await User.findOne({ email: email })
+	if (found) {
+		if (password === found?.password) {
+			return res.status(200).json(found)
+		}
+		return res.status(300).json({ message: "password mismatch" })
+	}
+
+	return res.status(404).json({ message: "user not found" })
+}
+
+const update = async (req: Request, res: Response) => {
+	try {
+		const name = req.body.name;
+		const username = req.body.username;
+		const birthdate = req.body.birthdate;
+		const email = req.body.email;
+		const avatar = req.body.avatar;
+		const user = await User.findByIdAndUpdate(req.params.id, {
+			name, username, birthdate, email, avatar
+		}, { new: true });
+		res.json(user).status(200);
+	} catch (error) {
+		res.status(401).send(error);
+	}
 };
 
 /*const login = async (req: Request, res : Response) => {
@@ -82,24 +118,10 @@ const deleteUser = async (req: Request, res: Response) => {
 		res.status(200).json({ status: 'User deleted' });
 	}
 	catch (error) {
-		res.status(500).json({message: 'error unknown', error });
+		res.status(500).json({ message: 'error unknown', error });
 	}
 };
 
-const update = async (req: Request, res: Response) => {
-	try{
-		const name = req.body.name;
-		const username = req.body.username;
-		const birthdate = req.body.birthdate;
-		const email = req.body.email;
-		const user = await User.findByIdAndUpdate(req.params.id, {
-			name, username, birthdate, email
-		}, {new: true});
-		res.json(user).status(200);
-	}catch (error) {
-		res.status(401).send(error);
-	}
-};
 
 /*const addAvatar = async (req: Request, res: Response) => {
 	const { idUser, avatar } = req.body;
@@ -125,10 +147,10 @@ const update = async (req: Request, res: Response) => {
 
 const addSerie = async (req: Request, res: Response) => {
 	const user = await User.findById(req.params.idUser);
-    if (!user) {
-        return res.status(404).send('The user does not exist');
-    }
-    const serie = await Serie.findById(req.params.idSerie);
+	if (!user) {
+		return res.status(404).send('The user does not exist');
+	}
+	const serie = await Serie.findById(req.params.idSerie);
 	if (!serie) {
 		return res.status(404).send('The series does not exist');
 	}
@@ -137,9 +159,9 @@ const addSerie = async (req: Request, res: Response) => {
 		if (err) {
 			return res.status(500).send(err);
 		}
-        user.save();
-        res.status(200).json({ status: 'Serie saved' });
-    });
+		user.save();
+		res.status(200).json({ status: 'Serie saved' });
+	});
 
 }
 
@@ -164,7 +186,7 @@ const delSerie = async (req: Request, res: Response) => {
 
 export default {
 	register,
-	//login,
+	login,
 	profile,
 	getall,
 	getone,

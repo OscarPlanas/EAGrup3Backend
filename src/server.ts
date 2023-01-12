@@ -32,6 +32,7 @@ app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json())
 app.use(cors());
 
+
 app.use('/api/users', User)
 app.use('/api/bookings', Booking)
 app.use('/api/series', Series)
