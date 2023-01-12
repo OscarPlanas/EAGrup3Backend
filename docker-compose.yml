@@ -1,0 +1,53 @@
+version: "3.3"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/etc/nginx/vhost.d"
+      - "/usr/share/nginx/html"
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "/etc/nginx/certs"
+    networks:
+      - proxy-tier
+  letsencrypt-nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt-nginx-proxy-companion
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    volumes_from:
+      - "nginx-proxy"
+    networks:
+      - proxy-tier
+  webapp:                                                                                                                                                                                                                                                                                  
+    container_name: backend 
+    restart: always 
+    image: oscarplanas/backend
+    environment:
+      - VIRTUAL_HOST= api1.tvtracker.tk
+      - LETSENCRYPT_HOST= api1.tvtracker.tk
+      - CERT_NAME= api1.tvtracker.tk
+      - LETSENCRYPT_EMAIL=casplanas7@gmail.com
+    networks:
+      - proxy-tier
+      - db-tier
+    depends_on:
+      - mongo
+  mongo:
+    container_name: mymongodatabase
+    image: mongo
+    networks:
+      - db-tier
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+  
+networks:
+  db-tier:
+    driver: bridge
+  proxy-tier:
+    driver: bridge
