@@ -13,8 +13,6 @@ import http from 'http';
 
 const app = express();
 
-
-
 //const app = express();
 const port = process.env.PORT || 5432;
 /** Server Handling */
@@ -59,12 +57,13 @@ io.on("connection", (socket: Socket) => {
 		console.log("User Disconnected", socket.id);
 	  });
 });
+
 httpServer.listen(3001, () => {
 	console.log("SERVER RUNNING");
 });
 
 //mongo
-mongoose.connect('mongodb://mongo/TVTracker', { useNewUrlParser : true } as ConnectOptions)
+mongoose.connect('mongodb+srv://pablo:JMKzaqiajpVO3tFo@tvtracker.zer0dv7.mongodb.net/?retryWrites=true&w=majority')
 	.then(() => {
 		// tslint:disable-next-line:no-console
         app.listen(port, () => console.log('Server corriendo en el puerto ' + port));
