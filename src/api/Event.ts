@@ -4,8 +4,8 @@ import { verifyToken, isOwner } from '../middlewares/authJWT'
 
 const router = Router();
 
-router.get('/', eventController.getall);
-//router.get('/',[verifyToken], eventController.getall);
+//router.get('/', eventController.getall);
+router.get('/',[verifyToken], eventController.getall);
 
 router.get('/:id_event', eventController.getone);
 //router.post('/', eventController.setone);

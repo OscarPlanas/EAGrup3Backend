@@ -93,8 +93,9 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const username = req.body.username;
         const birthdate = req.body.birthdate;
         const email = req.body.email;
+        const isAdmin = req.body.isAdmin;
         const user = yield User_1.default.findByIdAndUpdate(req.params.id, {
-            name, username, birthdate, email
+            name, username, birthdate, email, isAdmin
         }, { new: true });
         res.json(user).status(200);
     }

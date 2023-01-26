@@ -11,6 +11,7 @@ const User_1 = __importDefault(require("./api/User"));
 const Booking_1 = __importDefault(require("./api/Booking"));
 const Series_1 = __importDefault(require("./api/Series"));
 const Event_1 = __importDefault(require("./api/Event"));
+const Report_1 = __importDefault(require("./api/Report"));
 const auth_1 = __importDefault(require("./api/auth"));
 const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
@@ -25,6 +26,7 @@ const httpServer = http_1.default.createServer(app);
 const io = new socket_io_1.Server(httpServer, {
     cors: {
         origin: 'http://localhost:3000',
+        //origin:'http://api1.tvtracker.tk',
         methods: ["GET", "POST"]
     }
 });
@@ -36,6 +38,7 @@ app.use('/api/bookings', Booking_1.default);
 app.use('/api/series', Series_1.default);
 app.use('/api/events', Event_1.default);
 app.use('/api/auth', auth_1.default);
+app.use('/api/report', Report_1.default);
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });

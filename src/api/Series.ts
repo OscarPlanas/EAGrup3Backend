@@ -4,8 +4,8 @@ import { verifyToken, isOwner } from '../middlewares/authJWT'
 
 const router = Router();
 
-router.get('/', seriesController.getall);
-//router.get('/',[verifyToken], seriesController.getall);
+//router.get('/', seriesController.getall);
+router.get('/',[verifyToken], seriesController.getall);
 
 router.get('/:id', seriesController.getone);
 router.post('/', seriesController.setone);

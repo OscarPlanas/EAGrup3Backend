@@ -92,8 +92,9 @@ const update = async (req: Request, res: Response) => {
 		const username = req.body.username;
 		const birthdate = req.body.birthdate;
 		const email = req.body.email;
+		const isAdmin = req.body.isAdmin;
 		const user = await User.findByIdAndUpdate(req.params.id, {
-			name, username, birthdate, email
+			name, username, birthdate, email, isAdmin
 		}, {new: true});
 		res.json(user).status(200);
 	}catch (error) {

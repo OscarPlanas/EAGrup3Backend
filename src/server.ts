@@ -6,6 +6,7 @@ import User from "./api/User";
 import Booking from "./api/Booking";
 import Series from "./api/Series";
 import Event from "./api/Event";
+import Report from "./api/Report";
 import auth from "./api/auth";
 import { createServer } from "http";
 import { Server, Socket } from "socket.io";
@@ -25,10 +26,10 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
 	origin:'http://localhost:3000',
+	//origin:'http://api1.tvtracker.tk',
 	methods:["GET","POST"]
   }
 });
-
 
 app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json())
@@ -39,6 +40,8 @@ app.use('/api/bookings', Booking)
 app.use('/api/series', Series)
 app.use('/api/events', Event)
 app.use('/api/auth', auth)
+app.use('/api/report', Report)
+
 
 app.get('/', ( req: express.Request, res: express.Response ) => {
 	res.send('Hello World!')

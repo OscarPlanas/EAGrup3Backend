@@ -13,6 +13,7 @@ router.get('/profile/:id', userController.profile);
 router.get('/', userController.getall);
 //router.get('/', [verifyToken, isModerator], userController.getall);
 
+
 router.delete('/:id', userController.deleteUser);
 //router.delete('/:id',  [verifyToken, isOwner], userController.deleteUser);
 
