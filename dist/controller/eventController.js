@@ -19,7 +19,7 @@ const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(events);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const event = yield Event_1.default.findById(req.params.id_event).populate('participants').populate({ path: 'comments', populate: { path: 'owner' } });
+    const event = yield Event_1.default.findById(req.params.id_event).populate('owner').populate('participants').populate('comments');
     if (!event) {
         return res.status(404).send('The event does not exist');
     }
@@ -61,11 +61,7 @@ const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (err) {
             return res.status(500).send(err);
         }
-    });
-    event.updateOne({ $push: { comments: comment._id } }, (err) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
+        event.update({ _id: event._id }, { $push: { comments: comment._id } });
         event.save();
         res.status(200).json({ status: 'Comment saved' });
     });

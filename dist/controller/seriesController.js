@@ -21,7 +21,7 @@ const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(series);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.findById(req.params.id).populate('episodes');
+    const series = yield Series_1.default.findById(req.params.id).populate({ path: 'comments', populate: { path: 'user' } });
     // 'comments, episodes');
     if (!series) {
         return res.status(404).send('The series does not exist');
@@ -115,7 +115,7 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     });
 });
 const addEpisode = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.findById(req.params.id);
+    const series = yield Series_1.default.findById(req.params.id_serie);
     if (!series) {
         return res.status(404).send('The series does not exist');
     }
@@ -124,11 +124,7 @@ const addEpisode = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (err) {
             return res.status(500).send(err);
         }
-    });
-    series.updateOne({ $push: { episodes: episode._id } }, (err) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
+        series.update({ _id: series._id }, { $push: { episodes: episode._id } });
         series.save();
         res.status(200).json({ status: 'Episode saved' });
     });
