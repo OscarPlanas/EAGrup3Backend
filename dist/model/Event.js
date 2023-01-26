@@ -11,6 +11,8 @@ const Event = new mongoose_1.Schema({
     },
     date: Date,
     location: String,
+    lat: Number,
+    lng: Number,
     participants: [{
             type: mongoose_1.Schema.Types.ObjectId,
             ref: "User"

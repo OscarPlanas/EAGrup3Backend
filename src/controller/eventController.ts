@@ -9,7 +9,7 @@ const getall = async (req: Request, res: Response) => {
 }
 
 const getone = async (req: Request, res: Response) => {
-    const event = await Event.findById(req.params.id_event).populate('owner').populate('participants').populate('comments');
+    const event = await Event.findById(req.params.id_event).populate('participants').populate({path: 'comments', populate: { path: 'owner' }});
     if (!event) {
         return res.status(404).send('The event does not exist');
     }
@@ -55,13 +55,15 @@ const addComment = async (req: Request, res: Response) => {
         if (err) {
             return res.status(500).send(err);
         }
-        event.update(
-            { _id: event._id },
-            { $push: { comments: comment._id } },
-        );
-        event.save();
-        res.status(200).json({ status: 'Comment saved' });
     });
+	event.updateOne({ $push: { comments: comment._id } }, (err: any) => {
+			if (err) {
+				return res.status(500).send(err);
+			}
+			event.save();
+			res.status(200).json({ status: 'Comment saved' });
+		}
+	);
 }
 
 /*const addParticipant = async (req: Request, res: Response) => {
