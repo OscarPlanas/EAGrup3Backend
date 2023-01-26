@@ -75,7 +75,7 @@ const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json(users);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findById(req.params.id);
+    const user = yield User_1.default.findOne({ username: req.params.username });
     res.json(user);
 });
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

@@ -12,6 +12,7 @@ router.post('/register', (0, express_validator_1.body)('password').isLength({ mi
 router.get('/profile/:id', userController_1.default.profile);
 //router.post('/:id/avatar', userController.addAvatar);
 router.get('/', userController_1.default.getall);
+router.get('/:username', userController_1.default.getone);
 //router.get('/', [verifyToken, isModerator], userController.getall);
 router.delete('/:id', userController_1.default.deleteUser);
 //router.delete('/:id',  [verifyToken, isOwner], userController.deleteUser);

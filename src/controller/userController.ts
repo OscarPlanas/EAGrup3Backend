@@ -72,7 +72,7 @@ const getall = async (req: Request, res: Response) => {
 };
 
 const getone = async (req: Request, res: Response) => {
-	const user = await User.findById(req.params.id);
+	const user = await User.findOne({ username: req.params.username });
 	res.json(user);
 };
 

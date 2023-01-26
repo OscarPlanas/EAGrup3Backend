@@ -8,5 +8,5 @@ const router = Router();
 router.get('/', reportController.getReports);
 router.get('/:id_report', reportController.getReport);
 router.post('/:id', reportController.addReport);
-
+router.delete('/:id_report', reportController.deleteReport);
 export default router;

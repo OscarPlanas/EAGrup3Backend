@@ -11,6 +11,8 @@ router.post('/register', body('password').isLength({ min: 6 }), body('email').is
 router.get('/profile/:id', userController.profile);
 //router.post('/:id/avatar', userController.addAvatar);
 router.get('/', userController.getall);
+router.get('/:username', userController.getone);
+
 //router.get('/', [verifyToken, isModerator], userController.getall);
 
 

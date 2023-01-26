@@ -33,8 +33,19 @@ const getReport = async (req: Request, res: Response) => {
     res.json(report);
 }
 
+const deleteReport = async (req: Request, res: Response) => {
+    try {
+        const user = await Report.findOneAndDelete({ id: req.params.id}).catch(Error);
+        res.status(200).json({ status: 'Report deleted' });
+    }
+    catch (error) {
+        res.status(500).json({message: 'Report not found', error });
+    }
+}
+
 export default { 
     addReport, 
     getReports, 
-    getReport 
+    getReport,
+    deleteReport
 };
