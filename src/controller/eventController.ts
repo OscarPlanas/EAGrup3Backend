@@ -44,7 +44,7 @@ const update = async (req: Request, res: Response) => {
 
 const deleteEvent = async (req: Request, res: Response) => {
     try {
-		const user = await Event.findOneAndDelete({ id: req.params.id}).catch(Error);
+		await Event.findByIdAndRemove(req.params.id);
 		res.status(200).json({ status: 'Event deleted' });
 	}
 	catch (error) {
