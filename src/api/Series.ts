@@ -1,9 +1,12 @@
 import seriesController from '../controller/seriesController';
 import { Router } from 'express';
+import { verifyToken, isOwner } from '../middlewares/authJWT'
 
 const router = Router();
 
-router.get('/', seriesController.getall);
+//router.get('/', seriesController.getall);
+router.get('/',[verifyToken], seriesController.getall);
+
 router.get('/:id', seriesController.getone);
 router.post('/', seriesController.setone);
 router.put('/:id', seriesController.update);
@@ -18,6 +21,8 @@ router.get('/:id/comments/:id_comment', seriesController.getComment);
 router.post('/:id/comments', seriesController.addComment);
 router.put('/:id/comments/:id_comment', seriesController.updateComment);
 router.delete('/:id/comments/:id_comment', seriesController.deleteComment);
+
+router.post('/:id', seriesController.addGenre);
 
 
 export default router;

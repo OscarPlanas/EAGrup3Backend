@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = __importDefault(require("../model/User"));
+const Series_1 = __importDefault(require("../model/Series"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const crypto_js_1 = __importDefault(require("crypto-js"));
 const secretoJWT = 'NuestraClaveEA3';
@@ -23,7 +24,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     let password = req.body.password;
     password = crypto_js_1.default.AES.encrypt(password, 'groupEA2022').toString();
-    const newUser = new User_1.default({ name, username, email, password, birthdate });
+    const newUser = new User_1.default({ name, username, email, password, birthdate, isAdmin: false });
     yield newUser.save((err) => {
         if (err) {
             return res.status(500).send(err);
@@ -70,11 +71,11 @@ const profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json(user);
 });
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield User_1.default.find().populate('avatar');
+    const users = yield User_1.default.find().populate('serie');
     res.status(200).json(users);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findById(req.params.id);
+    const user = yield User_1.default.findOne({ username: req.params.username });
     res.json(user);
 });
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -92,8 +93,9 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const username = req.body.username;
         const birthdate = req.body.birthdate;
         const email = req.body.email;
+        const isAdmin = req.body.isAdmin;
         const user = yield User_1.default.findByIdAndUpdate(req.params.id, {
-            name, username, birthdate, email
+            name, username, birthdate, email, isAdmin
         }, { new: true });
         res.json(user).status(200);
     }
@@ -101,20 +103,60 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(401).send(error);
     }
 });
-const addAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+/*const addAvatar = async (req: Request, res: Response) => {
     const { idUser, avatar } = req.body;
     try {
-        const user = yield User_1.default.findById(idUser);
+        
+        const user = await User.findById(idUser);
         //const avatar = req.body.avatar;
         if (!user) {
             return res.status(404).send('No user or serie found.');
         }
-        yield User_1.default.findOneAndUpdate({ _id: user.id }, { $addToSet: { avatar: avatar } });
+        
+         
+        await User.findOneAndUpdate({ _id: user.id }, { $addToSet: { avatar: avatar } });
+
         res.status(200).json({ status: 'Avatar added', avatar });
+        
+
+    }catch (error) {
+        res.status(500).json({message: 'error unknown', error });
     }
-    catch (error) {
-        res.status(500).json({ message: 'error unknown', error });
+
+}*/
+const addSerie = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(req.params.idUser);
+    if (!user) {
+        return res.status(404).send('The user does not exist');
     }
+    const serie = yield Series_1.default.findById(req.params.idSerie);
+    if (!serie) {
+        return res.status(404).send('The series does not exist');
+    }
+    user.updateOne({ $push: { serie: serie._id } }, (err) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        user.save();
+        res.status(200).json({ status: 'Serie saved' });
+    });
+});
+const delSerie = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(req.params.idUser);
+    if (!user) {
+        return res.status(404).send('The user does not exist');
+    }
+    const serie = yield Series_1.default.findById(req.params.idSerie);
+    if (!serie) {
+        return res.status(404).send('The series does not exist');
+    }
+    user.updateOne({ $pull: { serie: serie._id } }, (err) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        user.save();
+        res.status(200).json({ status: 'Serie deleted' });
+    });
 });
 exports.default = {
     register,
@@ -124,6 +166,8 @@ exports.default = {
     getone,
     deleteUser,
     update,
-    addAvatar
+    //addAvatar,
+    addSerie,
+    delSerie
 };
 //# sourceMappingURL=userController.js.map

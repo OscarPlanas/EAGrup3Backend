@@ -21,7 +21,7 @@ const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(series);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.findById(req.params.id).populate({ path: 'comments', populate: { path: 'user' } });
+    const series = yield Series_1.default.findById(req.params.id).populate('episodes');
     // 'comments, episodes');
     if (!series) {
         return res.status(404).send('The series does not exist');
@@ -115,7 +115,7 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     });
 });
 const addEpisode = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.findById(req.params.id_serie);
+    const series = yield Series_1.default.findById(req.params.id);
     if (!series) {
         return res.status(404).send('The series does not exist');
     }
@@ -124,7 +124,11 @@ const addEpisode = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (err) {
             return res.status(500).send(err);
         }
-        series.update({ _id: series._id }, { $push: { episodes: episode._id } });
+    });
+    series.updateOne({ $push: { episodes: episode._id } }, (err) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
         series.save();
         res.status(200).json({ status: 'Episode saved' });
     });
@@ -174,6 +178,25 @@ const deleteEpisode = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(200).json({ status: 'Episode deleted' });
     });
 });
+const addGenre = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const genre = req.body;
+    try {
+        const serie = yield Series_1.default.findById(req.params.id);
+        if (!serie) {
+            return res.status(404).send('Serie does not exist');
+        }
+        serie.updateOne({ $push: { genres: genre.genres } }, (err) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            serie.save();
+            res.status(200).json({ status: 'Genre saved' });
+        });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'error unknown', error });
+    }
+});
 exports.default = {
     getall,
     getone,
@@ -190,5 +213,6 @@ exports.default = {
     getEpisode,
     updateEpisode,
     deleteEpisode,
+    addGenre
 };
 //# sourceMappingURL=seriesController.js.map

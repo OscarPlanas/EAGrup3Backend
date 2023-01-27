@@ -5,9 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const bookingController_1 = __importDefault(require("../controller/bookingController"));
 const express_1 = require("express");
+const authJWT_1 = require("../middlewares/authJWT");
 const router = (0, express_1.Router)();
 router.post('/booking', bookingController_1.default.booking);
 router.delete('/cancel/:id', bookingController_1.default.cancel);
-router.get('/', bookingController_1.default.getall);
+router.get('/', [authJWT_1.verifyToken], bookingController_1.default.getall);
 exports.default = router;
 //# sourceMappingURL=Booking.js.map

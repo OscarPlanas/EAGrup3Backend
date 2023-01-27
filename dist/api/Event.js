@@ -7,7 +7,8 @@ const eventController_1 = __importDefault(require("../controller/eventController
 const express_1 = require("express");
 const authJWT_1 = require("../middlewares/authJWT");
 const router = (0, express_1.Router)();
-router.get('/', eventController_1.default.getall);
+//router.get('/', eventController.getall);
+router.get('/', [authJWT_1.verifyToken], eventController_1.default.getall);
 router.get('/:id_event', eventController_1.default.getone);
 //router.post('/', eventController.setone);
 router.put('/:id_event', eventController_1.default.update);

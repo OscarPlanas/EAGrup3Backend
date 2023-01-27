@@ -11,7 +11,9 @@ const secretoJWT: string = 'NuestraClaveEA3';
 
 export async function verifyToken(req: Request, res: Response, next: NextFunction) {
     console.log('VerifyToken');
-    const token = req.header("x-auth-token");
+    const token = req.headers['x-access-token'] as string;
+    //const token = req.header("x-auth-token");
+    console.log(token);
     if (!token) {
         return res.status(403).json({ message: 'No token provided' });
     }
@@ -19,28 +21,26 @@ export async function verifyToken(req: Request, res: Response, next: NextFunctio
 
         jwt.verify(token, secretoJWT);
         
-        /*
-        console.log("verifyToken");
-        req.body.id = decoded.id;
-        req.body.title = String(decoded.title);
-        req.body.description = String(decoded.description);
-        req.body.date = String(decoded.date.toLocaleString());
-        req.params.userId = decoded.userId;
-        req.params.email = String(decoded.email);
-        console.log("errorparams");
-        */
-
-
-        // const user = await User.findById(req.params.userId, { password: 0 });
-        // console.log(user);
-        // if (!user) {
-        //     return res.status(404).json({message: "No user found."});
-        // }
         next();
     } catch (error) {
         return res.status(401).json({ auth: false, message: 'Unauthorized' });
     }
 };
+
+export async function isModerator(req: Request, res: Response, next: NextFunction) {
+   console.log('isModerator');
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+        return res.status(404).json({ message: "No user found." });
+    }
+    const roles = user.isAdmin;
+    if (roles === true) {
+        next();
+    } else {
+        return res.status(401).json({ auth: false, message: "Not Moderator" });
+    }
+};
+
 
 export async function isOwner (req: Request, res: Response, next: NextFunction) {
     /*try {

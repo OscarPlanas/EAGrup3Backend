@@ -5,8 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const seriesController_1 = __importDefault(require("../controller/seriesController"));
 const express_1 = require("express");
+const authJWT_1 = require("../middlewares/authJWT");
 const router = (0, express_1.Router)();
-router.get('/', seriesController_1.default.getall);
+//router.get('/', seriesController.getall);
+router.get('/', [authJWT_1.verifyToken], seriesController_1.default.getall);
 router.get('/:id', seriesController_1.default.getone);
 router.post('/', seriesController_1.default.setone);
 router.put('/:id', seriesController_1.default.update);
@@ -21,5 +23,6 @@ router.get('/:id/comments/:id_comment', seriesController_1.default.getComment);
 router.post('/:id/comments', seriesController_1.default.addComment);
 router.put('/:id/comments/:id_comment', seriesController_1.default.updateComment);
 router.delete('/:id/comments/:id_comment', seriesController_1.default.deleteComment);
+router.post('/:id', seriesController_1.default.addGenre);
 exports.default = router;
 //# sourceMappingURL=Series.js.map

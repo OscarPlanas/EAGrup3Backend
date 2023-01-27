@@ -1,4 +1,5 @@
 import User from '../model/User';
+import Serie from '../model/Series';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 import { Request, Response } from 'express';
@@ -15,7 +16,7 @@ const register = async (req: Request, res: Response) => {
 	
 	let password = req.body.password;
 	password = CryptoJS.AES.encrypt(password, 'groupEA2022').toString();
-	const newUser = new User({ name, username, email, password, birthdate });
+	const newUser = new User({ name, username, email, password, birthdate, isAdmin: false });
 	await newUser.save( (err: any) => {
 		if (err) {
 			return res.status(500).send(err);
@@ -66,12 +67,12 @@ const profile = async (req: Request, res: Response) => {
 };
 
 const getall = async (req: Request, res: Response) => {
-	const users = await User.find().populate('avatar');
+	const users = await User.find().populate('serie');
 	res.status(200).json(users);
 };
 
 const getone = async (req: Request, res: Response) => {
-	const user = await User.findById(req.params.id);
+	const user = await User.findOne({ username: req.params.username });
 	res.json(user);
 };
 
@@ -91,8 +92,9 @@ const update = async (req: Request, res: Response) => {
 		const username = req.body.username;
 		const birthdate = req.body.birthdate;
 		const email = req.body.email;
+		const isAdmin = req.body.isAdmin;
 		const user = await User.findByIdAndUpdate(req.params.id, {
-			name, username, birthdate, email
+			name, username, birthdate, email, isAdmin
 		}, {new: true});
 		res.json(user).status(200);
 	}catch (error) {
@@ -100,7 +102,7 @@ const update = async (req: Request, res: Response) => {
 	}
 };
 
-const addAvatar = async (req: Request, res: Response) => {
+/*const addAvatar = async (req: Request, res: Response) => {
 	const { idUser, avatar } = req.body;
 	try {
 		
@@ -120,8 +122,46 @@ const addAvatar = async (req: Request, res: Response) => {
 		res.status(500).json({message: 'error unknown', error });
 	}
 
+}*/
+
+const addSerie = async (req: Request, res: Response) => {
+	const user = await User.findById(req.params.idUser);
+    if (!user) {
+        return res.status(404).send('The user does not exist');
+    }
+    const serie = await Serie.findById(req.params.idSerie);
+	if (!serie) {
+		return res.status(404).send('The series does not exist');
+	}
+
+	user.updateOne({ $push: { serie: serie._id } }, (err: any) => {
+		if (err) {
+			return res.status(500).send(err);
+		}
+        user.save();
+        res.status(200).json({ status: 'Serie saved' });
+    });
+
 }
 
+const delSerie = async (req: Request, res: Response) => {
+	const user = await User.findById(req.params.idUser);
+	if (!user) {
+		return res.status(404).send('The user does not exist');
+	}
+	const serie = await Serie.findById(req.params.idSerie);
+	if (!serie) {
+		return res.status(404).send('The series does not exist');
+	}
+
+	user.updateOne({ $pull: { serie: serie._id } }, (err: any) => {
+		if (err) {
+			return res.status(500).send(err);
+		}
+		user.save();
+		res.status(200).json({ status: 'Serie deleted' });
+	});
+}
 
 export default {
 	register,
@@ -131,5 +171,7 @@ export default {
 	getone,
 	deleteUser,
 	update,
-	addAvatar
+	//addAvatar,
+	addSerie,
+	delSerie
 };

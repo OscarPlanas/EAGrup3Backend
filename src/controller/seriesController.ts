@@ -193,6 +193,26 @@ const deleteEpisode = async (req: Request, res: Response) => {
     });
 };
 
+const addGenre = async (req: Request, res: Response) => {
+    
+    const genre = req.body;
+	try {
+        const serie = await Series.findById(req.params.id);
+		if (!serie) {
+			return res.status(404).send('Serie does not exist');
+		}
+		serie.updateOne({ $push: { genres: genre.genres } }, (err: any) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            serie.save();
+            res.status(200).json({ status: 'Genre saved' });
+        });
+
+	}catch (error) {
+		res.status(500).json({message: 'error unknown', error });
+	}
+};
 export default {
     getall,
     getone,
@@ -209,4 +229,5 @@ export default {
     getEpisode,
     updateEpisode,
     deleteEpisode,
+    addGenre
 };
