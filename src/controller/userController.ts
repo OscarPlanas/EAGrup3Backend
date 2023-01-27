@@ -26,7 +26,7 @@ const register = async (req: Request, res: Response) => {
 	const token = jwt.sign({ id: newUser._id }, secretoJWT, {
 		expiresIn: 60 * 60 * 24
 	});
-	res.status(200).json({ auth: true, token });
+	res.status(200).json({ auth: true, token, id: newUser._id });
 };
 
 /*const login = async (req: Request, res : Response) => {
