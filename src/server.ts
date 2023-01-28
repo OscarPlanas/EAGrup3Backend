@@ -25,8 +25,8 @@ const httpServer = http.createServer(app);
 //new ServerSocket(httpServer);
 const io = new Server(httpServer, {
   cors: {
-	origin:'http://localhost:3000',
-	//origin:'http://api1.tvtracker.tk',
+	//origin:'http://localhost:3000',
+	origin:'http://api1.tvtracker.tk',
 	methods:["GET","POST"]
   }
 });

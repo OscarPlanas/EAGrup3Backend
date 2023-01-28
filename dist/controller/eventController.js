@@ -42,12 +42,17 @@ const setone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    yield Event_1.default.findByIdAndUpdate(req.params.id_event, req.body, (err) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.status(200).json({ status: 'Event updated' });
-    });
+    try {
+        const title = req.body.title;
+        const description = req.body.description;
+        const event = yield Event_1.default.findByIdAndUpdate(req.params.id, {
+            title, description
+        }, { new: true });
+        res.json(event).status(200);
+    }
+    catch (error) {
+        res.status(401).send(error);
+    }
 });
 const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
