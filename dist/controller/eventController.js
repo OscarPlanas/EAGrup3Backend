@@ -14,12 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Event_1 = __importDefault(require("../model/Event"));
 const Comment_1 = __importDefault(require("../model/Comment"));
+const User_1 = __importDefault(require("../model/User"));
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const events = yield Event_1.default.find().populate('owner').populate('participants').populate('comments');
+    const events = yield Event_1.default.find().populate('owner').populate('participants').populate({
+        path: 'comments',
+        populate: { path: 'owner' }
+    });
     res.json(events);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const event = yield Event_1.default.findById(req.params.id_event).populate('owner').populate('participants').populate('comments');
+    const event = yield Event_1.default.findById(req.params.id_event).populate('participants').populate({
+        path: 'comments',
+        populate: { path: 'owner' }
+    });
     if (!event) {
         return res.status(404).send('The event does not exist');
     }
@@ -44,7 +51,7 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const deleteEvent = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield Event_1.default.findOneAndDelete({ id: req.params.id }).catch(Error);
+        yield Event_1.default.findByIdAndRemove(req.params.id);
         res.status(200).json({ status: 'Event deleted' });
     }
     catch (error) {
@@ -61,29 +68,26 @@ const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (err) {
             return res.status(500).send(err);
         }
-        event.update({ _id: event._id }, { $push: { comments: comment._id } });
+    });
+    event.updateOne({ $push: { comments: comment._id } }, (err) => {
         event.save();
         res.status(200).json({ status: 'Comment saved' });
     });
 });
-/*const addParticipant = async (req: Request, res: Response) => {
-    const event = await Event.findById(req.params.id_event);
+const addParticipant = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const event = yield Event_1.default.findById(req.params.id_event);
     if (!event) {
         return res.status(404).send('The event does not exist');
     }
-    const participants = new Comment(req.body);
-    await comment.save( (err: any) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        event.update(
-            { _id: event._id },
-            { $push: { comments: comment._id } },
-        );
+    const participant = yield User_1.default.findById(req.body.id);
+    if (event.participants.includes(participant === null || participant === void 0 ? void 0 : participant._id)) {
+        return res.status(404).send('The user is already a participant');
+    }
+    event.updateOne({ $push: { participants: participant === null || participant === void 0 ? void 0 : participant._id } }, (err) => {
         event.save();
-        res.status(200).json({ status: 'Comment saved' });
+        res.status(200).json({ status: 'Participant saved' });
     });
-}*/
+});
 const getComments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const event = yield Event_1.default.findById(req.params.id_event).populate('comments');
     if (!event) {
@@ -151,6 +155,7 @@ exports.default = {
     getComment,
     updateComment,
     deleteComment,
-    addEvent
+    addEvent,
+    addParticipant
 };
 //# sourceMappingURL=eventController.js.map

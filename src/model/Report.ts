@@ -2,8 +2,9 @@ import { Schema, model } from 'mongoose';
 
 const Report = new Schema({
     owner: String,
-    user_to_report: String,
+    user_reported: String,
     reason: String,
+    date: Date,
 
 });
 
