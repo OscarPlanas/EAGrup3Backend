@@ -12,6 +12,14 @@ const User = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'Series'
 	}],
+	event: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Event'
+	}],
+	comment: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Comment'
+	}],
 });
 
 export default model('User', User);

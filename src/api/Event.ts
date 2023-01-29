@@ -17,6 +17,6 @@ router.get('/:id_event/comments/:id_comment', eventController.getComment);
 router.post('/:id_event/comments', eventController.addComment);
 router.put('/:id_event/comments/:id_comment', eventController.updateComment);
 router.delete('/:id_event/comments/:id_comment', eventController.deleteComment);
-router.post('/',[verifyToken], eventController.addEvent);
+router.post('/', eventController.addEvent);
 
 export default router;

@@ -1,10 +1,13 @@
 import User from '../model/User';
 import Serie from '../model/Series';
+import Comment from '../model/Comment';
 import jwt from 'jsonwebtoken';
 import CryptoJS from 'crypto-js';
 import { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import IJwtPayload from '../model/IJwtPayload';
+// import { FileArray } from 'express-fileupload';
+import fs from 'fs';
 
 const secretoJWT: string = 'NuestraClaveEA3';
 
@@ -31,10 +34,11 @@ const register = async (req: Request, res: Response) => {
 };
 
 const profile = async (req: Request, res: Response) => {
-	const user = await User.findById(req.params.id, { password: 0 });
+	const user = await User.findById(req.params.id, { password: 0 }).populate('serie').populate('event').populate({ path: 'comment', populate: { path: 'owner' } });
 	if (!user) {
 		return res.status(404).send('No user found.');
 	}
+
 	res.status(200).json(user);
 };
 
@@ -44,7 +48,7 @@ const getall = async (req: Request, res: Response) => {
 };
 
 const getone = async (req: Request, res: Response) => {
-	const user = await User.findOne({ username: req.params.username });
+	const user = await User.findOne({ username: req.params.username }).populate('serie');
 	res.json(user);
 };
 
@@ -135,15 +139,51 @@ const delSerie = async (req: Request, res: Response) => {
 	});
 }
 
+const addComment = async (req: Request, res: Response) => {
+	const user = await User.findById(req.params.idUser);
+	if (!user) {
+		return res.status(404).send('The user does not exist');
+	}
+	const comment = new Comment(req.body);
+    await comment.save( (err: any) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+    });
+	user.updateOne({ $push: { comment: comment._id } }, (err: any) => {
+		user.save();
+		res.status(200).json({ status: 'Comment saved' });
+	});
+}
+
+const uploadAvatar = async (req: Request, res: Response) => {
+	const user = await User.findById(req.params.id);
+    // Get the file that was set to our field named "image"
+	const { image } = req.files as any;
+
+    // If no image submitted, exit
+    if (!image) return res.sendStatus(400);
+
+    // Move the uploaded image to our upload folder
+	const ext =	image.name.split('.').pop();
+	console.log(process.env.PATH)
+    image.mv('./src/upload/profile/' + user?._id + '.' + ext);
+	// console.log(ext);
+	// console.log(__dirname + '/upload/profile/' + image.name);
+	// console.log(req.files);
+    res.sendStatus(200);
+}
+
+
 export default {
 	register,
-	//login,
 	profile,
 	getall,
 	getone,
 	deleteUser,
 	update,
-	//addAvatar,
 	addSerie,
-	delSerie
+	delSerie,
+	addComment,
+	uploadAvatar
 };

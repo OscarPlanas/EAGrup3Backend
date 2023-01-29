@@ -24,13 +24,14 @@ const getone = async (req: Request, res: Response) => {
 }
 
 const setone = async (req: Request, res: Response) => {
-    const event = new Event(req.body);
-    await event.save( (err: any) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.status(200).json({ status: 'Event saved' });
-    });
+    // const event = new Event(req.body);
+    // await event.save( (err: any) => {
+    //     if (err) {
+    //         return res.status(500).send(err);
+    //     }
+    //     res.status(200).json({ status: 'Event saved' });
+    // });
+	console.log(req.body);
 }
 
 const update = async (req: Request, res: Response) => {
@@ -75,9 +76,15 @@ const addParticipant = async (req: Request, res: Response) => {
         return res.status(404).send('The event does not exist');
     }
     const participant = await User.findById(req.body.id);
+	if (!participant) {
+		return res.status(404).send('The user does not exist');
+	}
 	if (event.participants.includes(participant?._id!)) {
 		return res.status(404).send('The user is already a participant');
 	}
+	participant.updateOne({ $push: { event: event._id } }, (err: any) => {
+		participant.save();
+	});
     event.updateOne({ $push: { participants: participant?._id } }, (err: any) => {
 		event.save();
 		res.status(200).json({ status: 'Participant saved' });

@@ -1,4 +1,5 @@
 import express from "express";
+import fileUpload from "express-fileupload";
 import bodyParser from "body-parser";
 import mongoose, { ConnectOptions } from "mongoose";
 import cors from "cors";
@@ -16,13 +17,10 @@ const app = express();
 
 
 
-//const app = express();
+
 const port = process.env.PORT || 5432;
 /** Server Handling */
 const httpServer = http.createServer(app);
-//const httpServer = createServer();
-/** Start Socket */
-//new ServerSocket(httpServer);
 const io = new Server(httpServer, {
   cors: {
 	origin:'http://localhost:3000',
@@ -31,6 +29,8 @@ const io = new Server(httpServer, {
   }
 });
 
+app.use(express.static('src/upload/'))
+app.use(fileUpload());
 app.use(bodyParser.urlencoded({ extended : true }));
 app.use(bodyParser.json())
 app.use(cors());

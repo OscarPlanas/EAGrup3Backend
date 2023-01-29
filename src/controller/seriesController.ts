@@ -4,14 +4,14 @@ import Episode from '../model/Episode';
 import { Request, Response } from 'express';
 
 const getall = async (req: Request, res: Response) => {
-    const series = await Series.find().populate({ path: 'comments', populate: { path: 'user' } });
+    const series = await Series.find().populate({ path: 'comments', populate: { path: 'owner' } });
 
     // populate('comments, episodes');
     res.json(series);
 };
 
 const getone = async (req: Request, res: Response) => {
-    const series = await Series.findById(req.params.id).populate('episodes');
+    const series = await Series.findById(req.params.id).populate('episodes').populate({ path: 'comments', populate: { path: 'owner' }});
 
 
         // 'comments, episodes');
@@ -51,7 +51,7 @@ const deleteSerie = async (req: Request, res: Response) => {
 };
 
 const addComment = async (req: Request, res: Response) => {
-    const series = await Series.findById(req.params.id_serie);
+    const series = await Series.findById(req.params.serie_id);
     if (!series) {
         return res.status(404).send('The series does not exist');
     }
@@ -60,13 +60,11 @@ const addComment = async (req: Request, res: Response) => {
         if (err) {
             return res.status(500).send(err);
         }
-        series.update(
-            { _id: series._id },
-            { $push: { comments: comment._id } },
-        );
-        series.save();
-        res.status(200).json({ status: 'Comment saved' });
     });
+	series.updateOne({ $push: { comments: comment._id } }, (err: any) => {
+		series.save();
+		res.status(200).json({ status: 'Comment saved' });
+	});
 };
 
 const getComments = async (req: Request, res: Response) => {
