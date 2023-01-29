@@ -7,16 +7,12 @@ const User = new mongoose_1.Schema({
     password: String,
     birthdate: Date,
     email: String,
-    //avatar: String,
+    avatar: String,
     isAdmin: Boolean,
     serie: [{
             type: mongoose_1.Schema.Types.ObjectId,
             ref: 'Series'
         }],
-    /*id: { type: Number, required: true },
-  name: { type: String, required: true },
-  password: { type: String, required: true},
-  username: { type: String, required: true},*/
 });
 exports.default = (0, mongoose_1.model)('User', User);
 //# sourceMappingURL=User.js.map

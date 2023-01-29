@@ -23,8 +23,8 @@ const port = process.env.PORT || 5432;
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-	origin:'http://localhost:3000',
-	//origin:'http://api1.tvtracker.tk',
+	//origin:'http://localhost:3000',
+	origin:'http://api1.tvtracker.tk',
 	methods:["GET","POST"]
   }
 });
@@ -67,7 +67,7 @@ httpServer.listen(3001, () => {
 });
 
 //mongo
-mongoose.connect('mongodb://localhost/TVTracker', { useNewUrlParser : true } as ConnectOptions)
+mongoose.connect('mongodb://mongo/TVTracker', { useNewUrlParser : true } as ConnectOptions)
 	.then(() => {
 		// tslint:disable-next-line:no-console
         app.listen(port, () => console.log('Server corriendo en el puerto ' + port));

@@ -21,6 +21,8 @@ const getone = async (req: Request, res: Response) => {
         return res.status(404).send('The event does not exist');
     }
     res.json(event);
+
+    
 }
 
 const setone = async (req: Request, res: Response) => {
@@ -35,17 +37,22 @@ const setone = async (req: Request, res: Response) => {
 }
 
 const update = async (req: Request, res: Response) => {
-    await Event.findByIdAndUpdate(req.params.id_event, req.body, (err: any) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.status(200).json({ status: 'Event updated' });
-    });
+    try{
+		const title = req.body.title;
+		const description = req.body.description;
+		const event = await Event.findByIdAndUpdate(req.params.id, {
+			title, description
+		}, {new: true});
+		res.json(event).status(200);
+	}catch (error) {
+		res.status(401).send(error);
+	}
+
 }
 
 const deleteEvent = async (req: Request, res: Response) => {
     try {
-		const user = await Event.findOneAndDelete({ id: req.params.id}).catch(Error);
+		await Event.findByIdAndRemove(req.params.id);
 		res.status(200).json({ status: 'Event deleted' });
 	}
 	catch (error) {

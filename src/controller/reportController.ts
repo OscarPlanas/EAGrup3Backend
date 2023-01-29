@@ -5,11 +5,13 @@ import { Request, Response } from 'express';
 const addReport = async (req: Request, res: Response) => {
     const owner = req.params.id;
     const reason = req.body.reason;
-    const user_to_report = req.body.user_to_report;
+    const user_reported = req.body.user_reported;
+    const date = req.body.date;
     const newReport = new Report({
 		owner,
-        user_to_report,
-        reason
+        user_reported,
+        reason,
+        date
         
 	});
     await newReport.save( (err: any) => {
@@ -35,7 +37,7 @@ const getReport = async (req: Request, res: Response) => {
 
 const deleteReport = async (req: Request, res: Response) => {
     try {
-        const user = await Report.findOneAndDelete({ id: req.params.id}).catch(Error);
+		await Report.findByIdAndRemove(req.params.id);
         res.status(200).json({ status: 'Report deleted' });
     }
     catch (error) {
