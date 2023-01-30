@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = __importDefault(require("../model/User"));
 const Series_1 = __importDefault(require("../model/Series"));
+const Comment_1 = __importDefault(require("../model/Comment"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const crypto_js_1 = __importDefault(require("crypto-js"));
 const secretoJWT = 'NuestraClaveEA3';
@@ -37,7 +38,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json({ auth: true, token, id: newUser._id });
 });
 const profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findById(req.params.id, { password: 0 });
+    const user = yield User_1.default.findById(req.params.id, { password: 0 }).populate('serie').populate('event').populate({ path: 'comment', populate: { path: 'owner' } });
     if (!user) {
         return res.status(404).send('No user found.');
     }
@@ -48,7 +49,7 @@ const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json(users);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield User_1.default.findOne({ username: req.params.username });
+    const user = yield User_1.default.findOne({ username: req.params.username }).populate('serie');
     res.json(user);
 });
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -131,16 +132,48 @@ const delSerie = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).json({ status: 'Serie deleted' });
     });
 });
+const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(req.params.idUser);
+    if (!user) {
+        return res.status(404).send('The user does not exist');
+    }
+    const comment = new Comment_1.default(req.body);
+    yield comment.save((err) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+    });
+    user.updateOne({ $push: { comment: comment._id } }, (err) => {
+        user.save();
+        res.status(200).json({ status: 'Comment saved' });
+    });
+});
+const uploadAvatar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(req.params.id);
+    // Get the file that was set to our field named "image"
+    const { image } = req.files;
+    // If no image submitted, exit
+    if (!image)
+        return res.sendStatus(400);
+    // Move the uploaded image to our upload folder
+    const ext = image.name.split('.').pop();
+    console.log(process.env.PATH);
+    image.mv('./src/upload/profile/' + (user === null || user === void 0 ? void 0 : user._id) + '.' + ext);
+    // console.log(ext);
+    // console.log(__dirname + '/upload/profile/' + image.name);
+    // console.log(req.files);
+    res.sendStatus(200);
+});
 exports.default = {
     register,
-    //login,
     profile,
     getall,
     getone,
     deleteUser,
     update,
-    //addAvatar,
     addSerie,
-    delSerie
+    delSerie,
+    addComment,
+    uploadAvatar
 };
 //# sourceMappingURL=userController.js.map

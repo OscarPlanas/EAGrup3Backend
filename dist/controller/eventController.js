@@ -33,13 +33,14 @@ const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(event);
 });
 const setone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const event = new Event_1.default(req.body);
-    yield event.save((err) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.status(200).json({ status: 'Event saved' });
-    });
+    // const event = new Event(req.body);
+    // await event.save( (err: any) => {
+    //     if (err) {
+    //         return res.status(500).send(err);
+    //     }
+    //     res.status(200).json({ status: 'Event saved' });
+    // });
+    console.log(req.body);
 });
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -85,9 +86,15 @@ const addParticipant = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(404).send('The event does not exist');
     }
     const participant = yield User_1.default.findById(req.body.id);
+    if (!participant) {
+        return res.status(404).send('The user does not exist');
+    }
     if (event.participants.includes(participant === null || participant === void 0 ? void 0 : participant._id)) {
         return res.status(404).send('The user is already a participant');
     }
+    participant.updateOne({ $push: { event: event._id } }, (err) => {
+        participant.save();
+    });
     event.updateOne({ $push: { participants: participant === null || participant === void 0 ? void 0 : participant._id } }, (err) => {
         event.save();
         res.status(200).json({ status: 'Participant saved' });

@@ -1,6 +1,6 @@
 import seriesController from '../controller/seriesController';
 import { Router } from 'express';
-import { verifyToken, isOwner } from '../middlewares/authJWT'
+import { verifyToken, isModerator } from '../middlewares/authJWT'
 
 const router = Router();
 
@@ -8,9 +8,9 @@ const router = Router();
 router.get('/', seriesController.getall);
 
 router.get('/:id', seriesController.getone);
-router.post('/', seriesController.setone);
-router.put('/:id', seriesController.update);
-router.delete('/:id', seriesController.deleteSerie);
+router.post('/',[verifyToken, isModerator], seriesController.setone);
+router.put('/:id',[verifyToken, isModerator], seriesController.update);
+router.delete('/:id',[verifyToken, isModerator], seriesController.deleteSerie);
 router.get('/:id/episodes', seriesController.getEpisodes);
 router.get('/:id/episodes/:id_episode', seriesController.getEpisode);
 router.post('/:id/episodes', seriesController.addEpisode);

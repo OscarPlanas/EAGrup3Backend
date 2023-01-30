@@ -23,8 +23,8 @@ const port = process.env.PORT || 5432;
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
   cors: {
-	//origin:'http://localhost:3000',
-	origin:'http://api1.tvtracker.tk',
+	origin:'http://localhost:3000',
+	//origin:'http://api1.tvtracker.tk',
 	methods:["GET","POST"]
   }
 });

@@ -19,7 +19,7 @@ router.put('/:id/episodes/:id_episode', seriesController_1.default.updateEpisode
 router.delete('/:id/episodes/:id_episode', seriesController_1.default.deleteEpisode);
 router.get('/:id/comments', seriesController_1.default.getComments);
 router.get('/:id/comments/:id_comment', seriesController_1.default.getComment);
-router.post('/:id/comments', seriesController_1.default.addComment);
+router.post('/addcomment/:serie_id', seriesController_1.default.addComment);
 router.put('/:id/comments/:id_comment', seriesController_1.default.updateComment);
 router.delete('/:id/comments/:id_comment', seriesController_1.default.deleteComment);
 router.post('/:id', seriesController_1.default.addGenre);

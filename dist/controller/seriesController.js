@@ -16,12 +16,12 @@ const Series_1 = __importDefault(require("../model/Series"));
 const Comment_1 = __importDefault(require("../model/Comment"));
 const Episode_1 = __importDefault(require("../model/Episode"));
 const getall = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.find().populate({ path: 'comments', populate: { path: 'user' } });
+    const series = yield Series_1.default.find().populate({ path: 'comments', populate: { path: 'owner' } });
     // populate('comments, episodes');
     res.json(series);
 });
 const getone = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.findById(req.params.id).populate('episodes');
+    const series = yield Series_1.default.findById(req.params.id).populate('episodes').populate({ path: 'comments', populate: { path: 'owner' } });
     // 'comments, episodes');
     if (!series) {
         return res.status(404).send('The series does not exist');
@@ -55,7 +55,7 @@ const deleteSerie = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const series = yield Series_1.default.findById(req.params.id_serie);
+    const series = yield Series_1.default.findById(req.params.serie_id);
     if (!series) {
         return res.status(404).send('The series does not exist');
     }
@@ -64,7 +64,8 @@ const addComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (err) {
             return res.status(500).send(err);
         }
-        series.update({ _id: series._id }, { $push: { comments: comment._id } });
+    });
+    series.updateOne({ $push: { comments: comment._id } }, (err) => {
         series.save();
         res.status(200).json({ status: 'Comment saved' });
     });

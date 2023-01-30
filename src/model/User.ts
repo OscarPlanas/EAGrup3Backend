@@ -6,7 +6,7 @@ const User = new Schema({
 	password: String,
 	birthdate: Date,
 	email: String,
-	avatar: String,
+	//avatar: String,
 	isAdmin: Boolean,
 	serie: [{
 		type: Schema.Types.ObjectId,

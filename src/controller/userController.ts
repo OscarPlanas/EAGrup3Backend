@@ -101,22 +101,22 @@ const update = async (req: Request, res: Response) => {
 }*/
 
 const addSerie = async (req: Request, res: Response) => {
-	const user = await User.findById(req.params.idUser);
-    if (!user) {
-        return res.status(404).send('The user does not exist');
-    }
+	 const user = await User.findById(req.params.idUser);
+     if (!user) {
+         return res.status(404).send('The user does not exist');
+     }
     const serie = await Serie.findById(req.params.idSerie);
-	if (!serie) {
-		return res.status(404).send('The series does not exist');
-	}
+	 if (!serie) {
+	 	return res.status(404).send('The series does not exist');
+	 }
 
 	user.updateOne({ $push: { serie: serie._id } }, (err: any) => {
-		if (err) {
-			return res.status(500).send(err);
-		}
-        user.save();
-        res.status(200).json({ status: 'Serie saved' });
-    });
+	 	if (err) {
+	 		return res.status(500).send(err);
+	 	}
+         user.save();
+         res.status(200).json({ status: 'Serie saved' });
+     });
 
 }
 
